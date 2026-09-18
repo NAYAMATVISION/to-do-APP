@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Roadmap</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="breadcrumbs">
+        <span>📖 Team /</span>
+      </div>
+      <div class="header-actions">
+        <div class="view-controls">
+          <button class="view-btn active" data-view="list">List</button>
+          <button class="view-btn" data-view="board">Board</button>
+          <button class="view-btn" data-view="calendar">Calendar</button>
+        </div>
+      </div>
+    </header>
+
+    <h1 class="project-title">Product Roadmap</h1>
+
+    <main id="app-view">
+      <!-- Views will be dynamically injected here -->
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
