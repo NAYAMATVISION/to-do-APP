@@ -145,3 +145,124 @@
   color: var(--text-muted);
   list-style: none;
 }
+
+/* ==========================================================================
+   Kanban Board View
+   ========================================================================== */
+
+.board-view-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 14px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+}
+
+.board-column {
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  padding: 14px;
+}
+
+.board-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+
+.board-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.column-counter {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.board-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* Kanban Card Styles matching design */
+.board-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.board-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  border-color: var(--border-strong);
+}
+
+.board-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.board-card-body .task-checkbox {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.board-card-title {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-main);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.board-card.completed .board-card-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.board-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-top: 4px;
+}
+
+.board-empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 20px 10px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 8px;
+}

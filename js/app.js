@@ -1,103 +1,143 @@
 import { state } from './state.js';
 import { renderListView } from './views/listView.js';
+import { renderBoardView } from './views/boardView.js';
 import { icons } from './utils/icons.js';
 
-/**
- * Injects SVG markup into every [data-icon] slot in the given root.
- * Called once on DOMContentLoaded for static slots (header buttons).
- * @param {HTMLElement|Document} root
- */
-function mountIcons(root = document) {
-  root.querySelectorAll('.icon-slot[data-icon]').forEach(slot => {
-    const key = slot.dataset.icon;
-    if (icons[key]) slot.innerHTML = icons[key];
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  const appView        = document.getElementById('app-view');
-  const projectTitle   = document.getElementById('project-title');
-  const taskDialog     = document.getElementById('task-dialog');
-  const taskForm       = document.getElementById('task-form');
-  const openDialogBtn  = document.getElementById('open-task-dialog-btn');
+  const appView = document.getElementById('app-view');
+  const projectTitle = document.getElementById('project-title');
+  const taskDialog = document.getElementById('task-dialog');
+  const taskForm = document.getElementById('task-form');
+  const openDialogBtn = document.getElementById('open-task-dialog-btn');
   const closeDialogBtn = document.getElementById('close-dialog-btn');
-  const workspaceBtns  = document.querySelectorAll('.ws-btn');
-  const viewBtns       = document.querySelectorAll('.view-btn');
+  const workspaceBtns = document.querySelectorAll('.ws-btn');
+  const viewBtns = document.querySelectorAll('.view-btn');
 
-  // Mount SVG icons into all static header slots
-  mountIcons();
+  // Mount Header Vector SVGs
+  const personalIconSlot = document.getElementById('icon-personal');
+  const workIconSlot = document.getElementById('icon-work');
+  const addTaskIconSlot = document.getElementById('icon-add-task');
 
-  // Set initial default date in dialog to today
-  document.getElementById('task-date-input').value = new Date().toISOString().split('T')[0];
+  if (personalIconSlot) personalIconSlot.innerHTML = icons.user;
+  if (workIconSlot) workIconSlot.innerHTML = icons.briefcase;
+  if (addTaskIconSlot) addTaskIconSlot.innerHTML = icons.plus;
+
+  // Initialize dialog default date to current ISO day
+  const dateInput = document.getElementById('task-date-input');
+  if (dateInput) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
 
   // Core Render Engine
   function render() {
-    projectTitle.textContent =
-      state.activeWorkspace === 'personal' ? 'Personal Workspace' : 'Work & Projects';
+    // Dynamic project title based on selected workspace
+    projectTitle.textContent = state.activeWorkspace === 'personal' 
+      ? 'Personal Workspace' 
+      : 'Work & Projects';
 
-    // Update active workspace buttons
+    // Synchronize workspace buttons UI
     workspaceBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.workspace === state.activeWorkspace);
     });
 
-    // Render active view
+    // Synchronize view tab buttons UI
+    viewBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.view === state.currentView);
+    });
+
+    // Multi-view router
     if (state.currentView === 'list') {
       renderListView(appView, state);
-    } else {
-      appView.innerHTML = `<div style="padding: 40px 0; color: var(--text-muted); text-align: center;">
-        ${state.currentView.toUpperCase()} view coming up next.
-      </div>`;
+    } else if (state.currentView === 'board') {
+      renderBoardView(appView, state);
+    } else if (state.currentView === 'calendar') {
+      appView.innerHTML = `
+        <div style="padding: 60px 0; text-align: center; color: var(--text-muted);">
+          <p style="font-size: 15px; font-weight: 500;">Monthly Calendar View</p>
+          <p style="font-size: 13px; margin-top: 6px;">Calendar engine will be hooked up on Day 6.</p>
+        </div>
+      `;
     }
   }
 
-  // Subscribe render function to state changes (Observer Pattern)
+  // Register render callback with State Manager (Observer Pattern)
   state.subscribe(render);
 
-  // Workspace Switching
+  // Workspace Switcher Handlers
   workspaceBtns.forEach(btn => {
-    btn.addEventListener('click', e => {
-      state.setWorkspace(e.currentTarget.dataset.workspace);
+    btn.addEventListener('click', (e) => {
+      const button = e.currentTarget;
+      state.setWorkspace(button.dataset.workspace);
     });
   });
 
-  // View Switching
+  // View Mode Switcher Handlers
   viewBtns.forEach(btn => {
-    btn.addEventListener('click', e => {
-      viewBtns.forEach(b => b.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      state.setView(e.currentTarget.dataset.view);
+    btn.addEventListener('click', (e) => {
+      const button = e.currentTarget;
+      state.setView(button.dataset.view);
     });
   });
 
-  // Modal Handlers (Native HTML5 Dialog API)
-  openDialogBtn.addEventListener('click', () => taskDialog.showModal());
-  closeDialogBtn.addEventListener('click', () => taskDialog.close());
+  // Native Dialog API Event Handlers
+  openDialogBtn.addEventListener('click', () => {
+    taskDialog.showModal();
+  });
 
-  taskForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const title   = document.getElementById('task-title-input').value.trim();
-    const status  = document.getElementById('task-status-select').value;
-    const dueDate = document.getElementById('task-date-input').value;
+  closeDialogBtn.addEventListener('click', () => {
+    taskDialog.close();
+  });
 
-    if (title) {
-      state.addTask({ title, status, dueDate });
-      taskForm.reset();
-      document.getElementById('task-date-input').value = new Date().toISOString().split('T')[0];
+  // Close dialog on backdrop click
+  taskDialog.addEventListener('click', (e) => {
+    const dialogDimensions = taskDialog.getBoundingClientRect();
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
       taskDialog.close();
     }
   });
 
-  // Global Event Delegation for Task Actions (Checkbox & Delete)
-  appView.addEventListener('click', e => {
-    const taskItem = e.target.closest('.task-item');
-    if (!taskItem) return;
+  // Form Submission & Task Dispatch
+  taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-    const taskId = taskItem.dataset.id;
+    const titleInput = document.getElementById('task-title-input');
+    const statusSelect = document.getElementById('task-status-select');
+    const dateInput = document.getElementById('task-date-input');
 
-    if (e.target.closest('.task-checkbox')) {
+    const title = titleInput.value.trim();
+    const status = statusSelect.value;
+    const dueDate = dateInput.value;
+
+    if (title) {
+      state.addTask({ title, status, dueDate });
+      taskForm.reset();
+      dateInput.value = new Date().toISOString().split('T')[0];
+      taskDialog.close();
+    }
+  });
+
+  // Global Event Delegation: Click actions for List Items and Board Cards
+  appView.addEventListener('click', (e) => {
+    const taskContainer = e.target.closest('.task-item') || e.target.closest('.board-card');
+    if (!taskContainer) return;
+
+    const taskId = taskContainer.dataset.id;
+
+    // Toggle status checkmark
+    if (e.target.classList.contains('task-checkbox')) {
       state.toggleTaskCompletion(taskId);
-    } else if (e.target.closest('.delete-task-btn')) {
+      return;
+    }
+
+    // Delete task button
+    if (e.target.closest('.delete-task-btn')) {
       state.deleteTask(taskId);
+      return;
     }
   });
 
