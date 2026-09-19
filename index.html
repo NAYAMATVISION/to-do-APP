@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Roadmap</title>
-  <link rel="stylesheet" href="css/variable.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/views.css">
+  <link rel="stylesheet" href="css/variable.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/views.css" />
 </head>
 <body>
   <div class="app-container">
-    <!-- Top Bar / Workspace Switcher -->
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
     <header class="app-header">
-      <div class="workspace-switcher">
+      <div class="workspace-switcher" role="group" aria-label="Workspace">
         <button class="ws-btn active" data-workspace="personal">
           <span class="icon-slot" data-icon="personal" aria-hidden="true"></span>
           Personal
@@ -25,11 +26,12 @@
       </div>
 
       <div class="header-actions">
-        <div class="view-controls">
+        <div class="view-controls" role="group" aria-label="View mode">
           <button class="view-btn active" data-view="list">List</button>
-          <button class="view-btn" data-view="board">Board</button>
-          <button class="view-btn" data-view="calendar">Calendar</button>
+          <button class="view-btn"        data-view="board">Board</button>
+          <button class="view-btn"        data-view="calendar">Calendar</button>
         </div>
+
         <button id="open-task-dialog-btn" class="primary-btn">
           <span class="icon-slot" data-icon="plus" aria-hidden="true"></span>
           New Task
@@ -37,20 +39,28 @@
       </div>
     </header>
 
+    <!-- ── Page Title ───────────────────────────────────────────────────── -->
     <h1 class="project-title" id="project-title">Personal Workspace</h1>
 
-    <!-- Dynamic View Injected Here -->
+    <!-- ── Dynamic View Mount Point ─────────────────────────────────────── -->
     <main id="app-view"></main>
+
   </div>
 
-  <!-- Native HTML5 Dialog for Adding Tasks -->
+  <!-- ── Task Creation Dialog ─────────────────────────────────────────── -->
   <dialog id="task-dialog" class="task-modal">
     <form id="task-form" method="dialog">
       <h3>Create New Task</h3>
 
       <div class="form-group">
         <label for="task-title-input">Task Name</label>
-        <input type="text" id="task-title-input" placeholder="e.g. Finish lecture notes" required autocomplete="off" />
+        <input
+          type="text"
+          id="task-title-input"
+          placeholder="e.g. Finish lecture notes"
+          required
+          autocomplete="off"
+        />
       </div>
 
       <div class="form-row">

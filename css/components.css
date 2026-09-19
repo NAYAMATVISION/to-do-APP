@@ -1,65 +1,26 @@
+/* ── Header ──────────────────────────────────────────────────────────────── */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 4px 0 20px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
-.view-controls {
-  display: flex;
-  gap: 8px;
-}
-
-.view-btn {
-  background: none;
-  border: 1px solid transparent;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all 0.15s ease;
-}
-
-.view-btn:hover {
-  background-color: var(--bg-subtle);
-  color: var(--text-main);
-}
-
-.view-btn.active {
-  background-color: var(--bg-subtle);
-  border-color: var(--border-subtle);
-  color: var(--text-main);
-  font-weight: 500;
-}
-
-.project-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-top: 8px;
-}
-
-/* Workspace Switcher */
+/* ── Workspace Switcher ───────────────────────────────────────────────────── */
 .workspace-switcher {
   display: flex;
   background-color: var(--bg-subtle);
   padding: 3px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
+  gap: 2px;
 }
 
 .ws-btn {
@@ -74,7 +35,12 @@
   color: var(--text-muted);
   border-radius: calc(var(--radius-sm) - 2px);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.ws-btn:hover {
+  color: var(--text-main);
 }
 
 .ws-btn.active {
@@ -83,7 +49,45 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-/* Primary & Secondary Buttons */
+/* ── View Controls ────────────────────────────────────────────────────────── */
+.view-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.view-btn {
+  background: none;
+  border: 1px solid transparent;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  font-family: var(--font-stack);
+}
+
+.view-btn:hover {
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.view-btn.active {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* ── Project Title ────────────────────────────────────────────────────────── */
+.project-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-main);
+  padding: 20px 0 4px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
 .primary-btn {
   display: inline-flex;
   align-items: center;
@@ -91,29 +95,40 @@
   background-color: var(--text-main);
   color: #ffffff;
   border: none;
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+  font-family: var(--font-stack);
   transition: opacity 0.15s ease;
+  white-space: nowrap;
 }
 
 .primary-btn:hover {
-  opacity: 0.88;
+  opacity: 0.85;
 }
 
 .secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: 1px solid var(--border-strong);
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   color: var(--text-main);
   cursor: pointer;
+  font-family: var(--font-stack);
+  transition: background 0.15s ease;
 }
 
-/* Native Modal Dialog */
+.secondary-btn:hover {
+  background-color: var(--bg-subtle);
+}
+
+/* ── Native <dialog> Modal ────────────────────────────────────────────────── */
 .task-modal {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
@@ -121,18 +136,20 @@
   width: 100%;
   max-width: 420px;
   background: var(--bg-card);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
   margin: auto;
 }
 
 .task-modal::backdrop {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(2px);
 }
 
 .task-modal h3 {
-  font-size: 18px;
-  margin-bottom: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: var(--text-main);
 }
 
 .form-group {
@@ -143,7 +160,7 @@
 }
 
 .form-group label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -157,7 +174,10 @@
   border-radius: var(--radius-sm);
   font-size: 14px;
   outline: none;
-  font-family: inherit;
+  font-family: var(--font-stack);
+  color: var(--text-main);
+  background: var(--bg-card);
+  transition: border-color 0.15s ease;
 }
 
 .form-group input:focus,
@@ -175,19 +195,21 @@
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 20px;
 }
 
-/* Icon slot — zero-height wrapper so SVGs never push line-height */
+/* ── Icon Slot ────────────────────────────────────────────────────────────── */
+/* Zero-height wrapper prevents SVGs from pushing line-height */
 .icon-slot {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   line-height: 0;
   flex-shrink: 0;
 }
 
 .icon-slot svg {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }

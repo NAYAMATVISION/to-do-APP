@@ -1,113 +1,73 @@
 import { storage } from './storage.js';
 
-// Seed data if the user has no existing tasks
 const DEFAULT_TASKS = [
-  {
-    id: 'task-1',
-    title: 'Morning 20-min workout',
-    workspace: 'personal',
-    status: 'in-progress',
-    dueDate: '2026-09-19',
-    completed: false
-  },
-  {
-    id: 'task-2',
-    title: 'Review system design assignment',
-    workspace: 'work',
-    status: 'backlog',
-    dueDate: '2026-09-20',
-    completed: false
-  },
-  {
-    id: 'task-3',
-    title: 'Buy groceries & fruits',
-    workspace: 'personal',
-    status: 'backlog',
-    dueDate: '2026-09-19',
-    completed: false
-  }
+  { id: 'task-1', title: 'Morning 20-min workout',          workspace: 'personal', status: 'in-progress', dueDate: '2026-09-19', completed: false },
+  { id: 'task-2', title: 'Review system design assignment', workspace: 'work',     status: 'backlog',     dueDate: '2026-09-20', completed: false },
+  { id: 'task-3', title: 'Buy groceries and fruits',        workspace: 'personal', status: 'backlog',     dueDate: '2026-09-19', completed: false },
+  { id: 'task-4', title: 'Write sprint retrospective notes',workspace: 'work',     status: 'in-progress', dueDate: '2026-09-21', completed: false },
+  { id: 'task-5', title: 'Read 30 pages of current book',   workspace: 'personal', status: 'ready-qa',    dueDate: '2026-09-22', completed: false },
 ];
 
 class StateManager {
   constructor() {
-    this.tasks = storage.getTasks() || DEFAULT_TASKS;
+    const saved = storage.getTasks();
+    this.tasks           = saved ?? DEFAULT_TASKS;
     this.activeWorkspace = storage.getActiveWorkspace();
-    this.currentView = 'list';
-    this.listeners = [];
+    this.currentView     = 'list';
+    this._listeners      = [];
 
-    // Save defaults if clean installation
-    if (!storage.getTasks()) {
-      storage.saveTasks(this.tasks);
-    }
+    if (!saved) storage.saveTasks(this.tasks);
   }
 
-  /**
-   * Register a callback to execute whenever state mutates
-   * @param {Function} listener 
-   */
-  subscribe(listener) {
-    this.listeners.push(listener);
+  subscribe(fn) {
+    this._listeners.push(fn);
   }
 
-  /**
-   * Notify all subscribed render functions
-   */
-  notify() {
+  _notify() {
     storage.saveTasks(this.tasks);
     storage.saveActiveWorkspace(this.activeWorkspace);
-    this.listeners.forEach(callback => callback(this));
+    this._listeners.forEach(fn => fn());
   }
 
-  /**
-   * Get tasks filtered exclusively for the active workspace
-   */
   getFilteredTasks() {
     return this.tasks.filter(t => t.workspace === this.activeWorkspace);
   }
 
-  // State mutations
-  setWorkspace(workspace) {
-    this.activeWorkspace = workspace;
-    this.notify();
+  setWorkspace(ws) {
+    this.activeWorkspace = ws;
+    this._notify();
   }
 
-  setView(viewName) {
-    this.currentView = viewName;
-    this.notify();
+  setView(view) {
+    this.currentView = view;
+    this._notify();
   }
 
-  addTask(taskData) {
-    const newTask = {
-      id: `task-${Date.now()}`,
-      title: taskData.title,
+  addTask({ title, status = 'backlog', dueDate }) {
+    this.tasks.push({
+      id:        `task-${Date.now()}`,
+      title,
       workspace: this.activeWorkspace,
-      status: taskData.status || 'backlog',
-      dueDate: taskData.dueDate || new Date().toISOString().split('T')[0],
-      completed: false
-    };
-    this.tasks.push(newTask);
-    this.notify();
+      status,
+      dueDate:   dueDate || new Date().toISOString().split('T')[0],
+      completed: false,
+    });
+    this._notify();
   }
 
-  updateTaskStatus(taskId, newStatus) {
-    const task = this.tasks.find(t => t.id === taskId);
-    if (task) {
-      task.status = newStatus;
-      this.notify();
-    }
+  updateTaskStatus(id, status) {
+    const t = this.tasks.find(t => t.id === id);
+    if (t) { t.status = status; this._notify(); }
   }
 
-  toggleTaskCompletion(taskId) {
-    const task = this.tasks.find(t => t.id === taskId);
-    if (task) {
-      task.completed = !task.completed;
-      this.notify();
-    }
+  toggleTaskCompletion(id) {
+    const t = this.tasks.find(t => t.id === id);
+    if (t) { t.completed = !t.completed; this._notify(); }
   }
 
-  deleteTask(taskId) {
-    this.tasks = this.tasks.filter(t => t.id !== taskId);
-    this.notify();
+  deleteTask(id) {
+    this.tasks = this.tasks.filter(t => t.id !== id);
+    this._notify();
   }
 }
 

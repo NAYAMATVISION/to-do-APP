@@ -1,47 +1,29 @@
-// Storage keys
-const STORAGE_KEY = 'minimalist_roadmap_tasks';
-const WORKSPACE_KEY = 'minimalist_roadmap_active_workspace';
+const TASKS_KEY     = 'roadmap_tasks_v1';
+const WORKSPACE_KEY = 'roadmap_workspace_v1';
 
 export const storage = {
-  /**
-   * Retrieves saved tasks from localStorage safely.
-   * @returns {Array} Array of task objects or empty array if null/corrupt
-   */
   getTasks() {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : null;
-    } catch (error) {
-      console.error('Error reading tasks from localStorage:', error);
+      const raw = localStorage.getItem(TASKS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
       return null;
     }
   },
 
-  /**
-   * Saves the entire array of tasks into localStorage.
-   * @param {Array} tasks - Array of task objects
-   */
   saveTasks(tasks) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-    } catch (error) {
-      console.error('Error writing tasks to localStorage:', error);
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    } catch {
+      // Storage quota exceeded — fail silently
     }
   },
 
-  /**
-   * Gets the last selected workspace ('personal' | 'work')
-   * @returns {string} Workspace ID
-   */
   getActiveWorkspace() {
     return localStorage.getItem(WORKSPACE_KEY) || 'personal';
   },
 
-  /**
-   * Persists active workspace selection
-   * @param {string} workspaceId 
-   */
-  saveActiveWorkspace(workspaceId) {
-    localStorage.setItem(WORKSPACE_KEY, workspaceId);
-  }
+  saveActiveWorkspace(id) {
+    localStorage.setItem(WORKSPACE_KEY, id);
+  },
 };
