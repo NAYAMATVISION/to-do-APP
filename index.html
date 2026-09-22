@@ -3,89 +3,592 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Roadmap</title>
-  <link rel="stylesheet" href="css/variable.css" />
+  <title>Komorebi Workspace — Personal Life &amp; Deep Work</title>
+  <meta name="description" content="A production-grade, commercial-quality personal task and life management workspace built with Vanilla JavaScript, HTML5, and CSS3. Featuring Natural Language Parsing, Triple Views, and Zero-Asset Audio Pomodoro Dock." />
+
+  <!-- Google Fonts Display Serif & Sans-Serif Stacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
+
+  <!-- CSS Stylesheet Dependencies -->
+  <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/components.css" />
-  <link rel="stylesheet" href="css/views.css" />
+  <link rel="stylesheet" href="css/landing.css" />
+  <link rel="stylesheet" href="css/workspace.css" />
 </head>
 <body>
-  <div class="app-container">
 
-    <!-- ── Header ──────────────────────────────────────────────────────── -->
-    <header class="app-header">
-      <div class="workspace-switcher" role="group" aria-label="Workspace">
-        <button class="ws-btn active" data-workspace="personal">
-          <span class="icon-slot" data-icon="personal" aria-hidden="true"></span>
-          Personal
-        </button>
-        <button class="ws-btn" data-workspace="work">
-          <span class="icon-slot" data-icon="work" aria-hidden="true"></span>
-          Work
-        </button>
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SURFACE 1 — LANDING MARKETING & AUTH SURFACE
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div id="landing-surface">
+
+  <!-- ── Editorial Navbar ────────────────────────────────────────────────── -->
+  <nav class="landing-nav" aria-label="Main Navigation">
+    <a href="#" class="nav-brand">
+      <div class="nav-brand-mark" data-icon="logo" aria-hidden="true"></div>
+      Komorebi
+    </a>
+
+    <div class="nav-links" role="list">
+      <a href="#features" class="nav-link" role="listitem">Features</a>
+      <a href="#templates" class="nav-link" role="listitem">Templates</a>
+      <a href="#philosophy" class="nav-link" role="listitem">Philosophy</a>
+      <a href="#faq" class="nav-link" role="listitem">FAQ</a>
+    </div>
+
+    <div class="nav-cta">
+      <button class="btn-secondary" id="nav-signin-btn">Sign In</button>
+      <button class="btn-primary" data-action="open-demo">
+        Launch App
+        <span data-icon="arrowRight" aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ────────────────────────────────────────────────────── -->
+  <section class="hero-section" aria-labelledby="hero-headline">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span data-icon="spark" aria-hidden="true"></span>
+        Editorial Minimalist Productivity
       </div>
 
-      <div class="header-actions">
-        <div class="view-controls" role="group" aria-label="View mode">
-          <button class="view-btn active" data-view="list">List</button>
-          <button class="view-btn"        data-view="board">Board</button>
-          <button class="view-btn"        data-view="calendar">Calendar</button>
+      <h1 class="hero-headline" id="hero-headline">
+        Clarity, <em>finally.</em> Crafted for deep work &amp; life.
+      </h1>
+
+      <p class="hero-sub">
+        One calm, architectural workspace designed to organize your daily habits,
+        deep work sprints, and personal goals — without distraction.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-primary hero-cta" data-action="open-demo">
+          Try Demo Workspace
+          <span data-icon="arrowRight" aria-hidden="true"></span>
+        </button>
+        <button class="btn-secondary hero-cta" id="hero-register-btn">Create Free Account</button>
+      </div>
+
+      <p class="hero-note">Privacy-first storage. Isolated per authenticated account in your browser.</p>
+    </div>
+
+    <!-- Floating Interactive Preview Mockup Card -->
+    <div class="hero-mockup-wrap">
+      <div class="mockup-header">
+        <div class="mockup-title">
+          <span data-icon="brain" aria-hidden="true"></span>
+          Komorebi Workspace Preview
+        </div>
+        <div class="mockup-pills">
+          <span class="tag-pill">@deepwork</span>
+          <span class="priority-pill p1">URGENT</span>
+        </div>
+      </div>
+      <div class="mockup-task-list">
+        <div class="mockup-task-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" class="task-checkbox" checked readOnly />
+            <span style="text-decoration:line-through;color:var(--text-muted);">Architect Komorebi SPA engine @deepwork !p1</span>
+          </div>
+          <span class="task-date-pill">Today</span>
+        </div>
+        <div class="mockup-task-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" class="task-checkbox" readOnly />
+            <span>Review Q4 product roadmap OKRs @planning !p2</span>
+          </div>
+          <span class="task-date-pill">Tomorrow</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Template Shelf Showcase ─────────────────────────────────────────── -->
+  <section id="templates" class="templates-section" aria-labelledby="templates-title">
+    <div class="section-wrap">
+      <p class="section-label">Presets</p>
+      <h2 class="section-title" id="templates-title">Start with a curated template</h2>
+      <p class="section-sub">Select a ready-made workspace structure and jump straight into execution.</p>
+
+      <div class="template-grid">
+
+        <!-- Fitness & Health -->
+        <article class="template-card">
+          <div class="template-icon-wrap" style="background:var(--terracotta-light);color:var(--terracotta);">
+            <span data-icon="fitness" aria-hidden="true"></span>
+          </div>
+          <h3 class="template-name">Fitness &amp; Health</h3>
+          <div class="template-tasks">
+            <div class="template-task-row"><span class="template-task-dot"></span>Morning 20-min workout</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Hydrate 8 glasses water</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Evening stretching routine</div>
+          </div>
+          <button class="template-use-btn" data-template="fitness">Load Template</button>
+        </article>
+
+        <!-- Habit Formation -->
+        <article class="template-card">
+          <div class="template-icon-wrap" style="background:var(--olive-light);color:var(--olive);">
+            <span data-icon="target" aria-hidden="true"></span>
+          </div>
+          <h3 class="template-name">Habit Formation</h3>
+          <div class="template-tasks">
+            <div class="template-task-row"><span class="template-task-dot"></span>Read 25 pages non-fiction</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Daily reflection journal</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>10-minute mindfulness</div>
+          </div>
+          <button class="template-use-btn" data-template="habits">Load Template</button>
+        </article>
+
+        <!-- Deep Work Sprint -->
+        <article class="template-card">
+          <div class="template-icon-wrap" style="background:rgba(25,24,23,0.06);color:var(--text-main);">
+            <span data-icon="brain" aria-hidden="true"></span>
+          </div>
+          <h3 class="template-name">Deep Work Sprint</h3>
+          <div class="template-tasks">
+            <div class="template-task-row"><span class="template-task-dot"></span>2-hour uninterrupted focus</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Audit architecture code</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Ship production release</div>
+          </div>
+          <button class="template-use-btn" data-template="deepwork">Load Template</button>
+        </article>
+
+        <!-- Grocery & Errands -->
+        <article class="template-card">
+          <div class="template-icon-wrap" style="background:var(--terracotta-light);color:var(--terracotta);">
+            <span data-icon="shopping" aria-hidden="true"></span>
+          </div>
+          <h3 class="template-name">Grocery &amp; Errands</h3>
+          <div class="template-tasks">
+            <div class="template-task-row"><span class="template-task-dot"></span>Pantry essentials restock</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Pick up prescription</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Weekly meal prep items</div>
+          </div>
+          <button class="template-use-btn" data-template="grocery">Load Template</button>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Bento Feature Grid ──────────────────────────────────────────────── -->
+  <section id="features" class="features-section" aria-labelledby="features-title">
+    <div class="section-wrap">
+      <p class="section-label">Engine Features</p>
+      <h2 class="section-title" id="features-title">Designed for focus &amp; performance</h2>
+      <p class="section-sub">Built with pure Vanilla JS and browser standard APIs.</p>
+
+      <div class="feature-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="spark" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">Natural Language Parsing</h3>
+          <p class="feature-desc">
+            Type <code>Morning run tomorrow @fitness !p1</code> to parse date, tags, and priority flags dynamically into structured tasks.
+          </p>
         </div>
 
-        <button id="open-task-dialog-btn" class="primary-btn">
-          <span class="icon-slot" data-icon="plus" aria-hidden="true"></span>
-          New Task
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="board" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">Triple Reactive Views</h3>
+          <p class="feature-desc">
+            Toggle seamlessly between a status-grouped List, HTML5 native Drag &amp; Drop Kanban Board, and a 7-column Monthly Calendar grid.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="clock" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">Zero-Asset Web Audio Timer</h3>
+          <p class="feature-desc">
+            Includes a floating Pomodoro dock that synthesizes pure sine-wave chimes via the Web Audio API without external sound files.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="bell" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">Web Notifications API</h3>
+          <p class="feature-desc">
+            Hooks into native browser notification permissions to fire desktop alerts when Pomodoro timers finish or tasks come due.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="lock" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">State Isolation per Account</h3>
+          <p class="feature-desc">
+            Ensures multi-tenant data privacy by scoping local storage keys per user ID (e.g. <code>komorebi_tasks_u123</code>).
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <span data-icon="logo" aria-hidden="true"></span>
+          </div>
+          <h3 class="feature-title">Zero Emoji Architecture</h3>
+          <p class="feature-desc">
+            Strict editorial aesthetic powered exclusively by clean 16x16 vector SVG icons and high-contrast obsidian typography.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Interactive FAQ Accordion Section ───────────────────────────────── -->
+  <section id="faq" class="faq-section" aria-labelledby="faq-title">
+    <div class="section-wrap">
+      <p class="section-label">FAQ</p>
+      <h2 class="section-title" id="faq-title">Frequently asked questions</h2>
+      <p class="section-sub">Everything you need to know about Komorebi Workspace.</p>
+
+      <div class="faq-list" role="tablist">
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-1" id="faq-q-1">
+            <span>Is my task data private and saved locally?</span>
+            <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
+          </button>
+          <div id="faq-ans-1" class="faq-content" role="region" aria-labelledby="faq-q-1">
+            <div class="faq-body">
+              Yes. All your task data, custom tags, priorities, and workspace states are stored isolated inside your browser's localStorage. No third-party servers ever touch your personal information.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-2" id="faq-q-2">
+            <span>How does the Natural Language Input work?</span>
+            <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
+          </button>
+          <div id="faq-ans-2" class="faq-content" role="region" aria-labelledby="faq-q-2">
+            <div class="faq-body">
+              Our regex-based parser extracts relative dates like <code>today</code>, <code>tomorrow</code>, or <code>friday</code>, tags like <code>@fitness</code>, and priority indicators like <code>!p1</code> (Urgent) automatically as you type.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-3" id="faq-q-3">
+            <span>Does the Pomodoro timer require external audio files?</span>
+            <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
+          </button>
+          <div id="faq-ans-3" class="faq-content" role="region" aria-labelledby="faq-q-3">
+            <div class="faq-body">
+              No. We use the native Web Audio API (AudioContext) to synthesize a gentle 2-stage sine wave chime right in code, guaranteeing offline audio playback without broken media assets.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Editorial Footer ────────────────────────────────────────────────── -->
+  <footer class="landing-footer">
+    <div class="footer-top">
+      <div class="footer-brand-col">
+        <h3 class="footer-brand-title">Komorebi Workspace</h3>
+        <p class="footer-brand-desc">
+          Crafted for deep work, habit discipline, and personal life management.
+          Built with pure Vanilla JS, HTML5, and modern CSS3.
+        </p>
+      </div>
+
+      <div class="footer-links-grid">
+        <div>
+          <h4 class="footer-col-title">Navigation</h4>
+          <div class="footer-link-list">
+            <a href="#features">Features</a>
+            <a href="#templates">Templates</a>
+            <a href="#faq">FAQ</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Product</h4>
+          <div class="footer-link-list">
+            <a href="#" data-action="open-demo">Try Demo</a>
+            <a href="#" id="footer-signin-btn">Sign In</a>
+            <a href="#" id="footer-register-btn">Create Account</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-watermark" aria-hidden="true">KOMOREBI</div>
+
+    <div class="footer-bottom">
+      <span>Komorebi Workspace &copy; 2026. Production-Grade SPA.</span>
+      <span>Vanilla JS (ES Modules) &middot; Web Audio API &middot; Local Storage Scoping</span>
+    </div>
+  </footer>
+
+</div><!-- /#landing-surface -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SURFACE 2 — PROTECTED WORKSPACE SURFACE
+     ══════════════════════════════════════════════════════════════════════════ -->
+<div id="app-surface" class="surface-hidden">
+
+  <!-- ── Top Header Navigation Bar ───────────────────────────────────────── -->
+  <header class="ws-header" aria-label="Workspace Header Navigation">
+
+    <div class="ws-header-left">
+      <!-- Back to Landing Page -->
+      <button id="ws-back-btn" class="ws-back-btn" title="Back to main page">
+        <span data-icon="logo" aria-hidden="true"></span>
+        Komorebi
+      </button>
+
+      <div class="ws-divider" aria-hidden="true"></div>
+
+      <!-- Segmented Workspace Switcher Tabs -->
+      <nav class="ws-switcher-tabs" aria-label="Workspace Scope">
+        <button class="ws-tab-btn active" data-workspace="personal">
+          <span data-icon="user" aria-hidden="true"></span>
+          Personal Life
+        </button>
+        <button class="ws-tab-btn" data-workspace="work">
+          <span data-icon="brain" aria-hidden="true"></span>
+          Deep Work
+        </button>
+      </nav>
+    </div>
+
+    <div class="ws-header-right">
+
+      <!-- Streak & Animated Ring Pill -->
+      <div class="streak-pill" id="streak-pill" aria-live="polite">
+        <div class="streak-ring" aria-hidden="true">
+          <svg viewBox="0 0 22 22">
+            <circle class="ring-track" cx="11" cy="11" r="9"/>
+            <circle class="ring-fill"  cx="11" cy="11" r="9" id="ring-fill"/>
+          </svg>
+        </div>
+        <span id="streak-label">0% Today</span>
+      </div>
+
+      <!-- Triple View Mode Toggles -->
+      <div class="view-toggle-group" role="group" aria-label="View Modes">
+        <button class="view-toggle-btn active" data-view="list">
+          <span data-icon="list" aria-hidden="true"></span>
+          List
+        </button>
+        <button class="view-toggle-btn" data-view="board">
+          <span data-icon="board" aria-hidden="true"></span>
+          Board
+        </button>
+        <button class="view-toggle-btn" data-view="calendar">
+          <span data-icon="calendar" aria-hidden="true"></span>
+          Calendar
         </button>
       </div>
-    </header>
 
-    <!-- ── Page Title ───────────────────────────────────────────────────── -->
-    <h1 class="project-title" id="project-title">Personal Workspace</h1>
+      <!-- Profile Badge -->
+      <div class="profile-badge">
+        <div class="profile-avatar" id="user-avatar-initial">G</div>
+        <span id="user-display-name">Guest</span>
+        <button class="sign-out-btn" id="sign-out-btn" title="Sign Out">
+          <span data-icon="close" aria-hidden="true"></span>
+        </button>
+      </div>
 
-    <!-- ── Dynamic View Mount Point ─────────────────────────────────────── -->
-    <main id="app-view"></main>
+      <!-- "+ New Task" Trigger -->
+      <button id="open-task-dialog-btn" class="btn-primary">
+        <span data-icon="plus" aria-hidden="true"></span>
+        New Task
+      </button>
 
+    </div>
+  </header>
+
+  <!-- ── Main Workspace Body Container ───────────────────────────────────── -->
+  <div class="ws-body">
+
+    <!-- Workspace Title Row -->
+    <div class="ws-title-row">
+      <div>
+        <h1 class="ws-title" id="ws-title">Personal Life</h1>
+        <p class="ws-subtitle" id="ws-subtitle">Organize habits, fitness, and daily errands.</p>
+      </div>
+    </div>
+
+    <!-- Natural Language Task Quick-Add Input Bar -->
+    <form id="nlp-form" class="nlp-bar" autocomplete="off" aria-label="Natural Language Quick Add">
+      <span class="nlp-bar-icon icon-slot" data-icon="spark" aria-hidden="true"></span>
+      <input
+        type="text"
+        id="nlp-input"
+        class="nlp-input"
+        placeholder="Add task... e.g. Morning run tomorrow @fitness !p1"
+        aria-label="Add task with natural language parsing"
+      />
+      <span class="nlp-hint" aria-hidden="true">today &middot; tomorrow &middot; @tag &middot; !p1</span>
+      <button type="submit" class="nlp-submit-btn">
+        <span data-icon="plus" aria-hidden="true"></span>
+        Add
+      </button>
+    </form>
+
+    <!-- Natural Language Live Parsed Preview Chips -->
+    <div id="nlp-preview" class="nlp-preview" aria-live="polite" aria-label="Parsed Task Preview"></div>
+
+    <!-- Reactive Dynamic View Mount Point -->
+    <main id="app-view" aria-live="polite"></main>
+
+  </div><!-- /ws-body -->
+
+  <!-- ── Floating Pomodoro Focus Dock Widget ─────────────────────────────── -->
+  <aside class="pomodoro-dock" aria-label="Pomodoro Focus Dock">
+    <div style="display:flex;flex-direction:column;">
+      <span class="pomo-label">Focus Dock</span>
+      <span class="pomo-time-display" id="pomo-display">25:00</span>
+    </div>
+    <div class="pomo-controls">
+      <button class="pomo-btn" id="pomo-play-btn" title="Start Focus Session" aria-label="Start timer">
+        <span data-icon="play" aria-hidden="true"></span>
+      </button>
+      <button class="pomo-btn" id="pomo-pause-btn" title="Pause Timer" aria-label="Pause timer" style="display:none;">
+        <span data-icon="pause" aria-hidden="true"></span>
+      </button>
+      <button class="pomo-btn" id="pomo-reset-btn" title="Reset Session" aria-label="Reset timer">
+        <span data-icon="rotate" aria-hidden="true"></span>
+      </button>
+    </div>
+  </aside>
+
+</div><!-- /#app-surface -->
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL DIALOG 1 — AUTHENTICATION MODAL (<dialog id="auth-modal">)
+     ══════════════════════════════════════════════════════════════════════════ -->
+<dialog id="auth-modal" class="auth-dialog" aria-labelledby="auth-modal-title">
+  <div class="auth-tabs">
+    <button class="auth-tab-btn active" id="tab-signin-btn">Sign In</button>
+    <button class="auth-tab-btn" id="tab-register-btn">Create Account</button>
   </div>
 
-  <!-- ── Task Creation Dialog ─────────────────────────────────────────── -->
-  <dialog id="task-dialog" class="task-modal">
-    <form id="task-form" method="dialog">
-      <h3>Create New Task</h3>
+  <div class="auth-body">
+    <h3 class="auth-heading" id="auth-modal-title">Welcome back</h3>
+    <p class="auth-sub" id="auth-modal-sub">Sign in to access your isolated workspace store.</p>
 
+    <div class="auth-error" id="auth-error"></div>
+
+    <!-- Sign In Form -->
+    <form id="signin-form" class="auth-form" autocomplete="off">
+      <div class="auth-input-group">
+        <label for="signin-email">Email Address</label>
+        <input type="email" id="signin-email" placeholder="name@domain.com" required />
+      </div>
+      <div class="auth-input-group">
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;">Sign In</button>
+    </form>
+
+    <!-- Create Account Form (Hidden by default) -->
+    <form id="register-form" class="auth-form" style="display:none;" autocomplete="off">
+      <div class="auth-input-group">
+        <label for="register-name">Full Name</label>
+        <input type="text" id="register-name" placeholder="e.g. Alex Morgan" required />
+      </div>
+      <div class="auth-input-group">
+        <label for="register-email">Email Address</label>
+        <input type="email" id="register-email" placeholder="name@domain.com" required />
+      </div>
+      <div class="auth-input-group">
+        <label for="register-password">Password (min 6 characters)</label>
+        <input type="password" id="register-password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;">Create Account</button>
+    </form>
+
+    <div class="auth-demo-divider">OR</div>
+
+    <button type="button" class="btn-secondary" id="auth-demo-btn" style="width:100%;">
+      Continue as Guest (Demo Mode)
+    </button>
+  </div>
+</dialog>
+
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     MODAL DIALOG 2 — TASK CREATION DIALOG (<dialog id="task-dialog">)
+     ══════════════════════════════════════════════════════════════════════════ -->
+<dialog id="task-dialog" class="task-modal" aria-labelledby="dialog-title">
+  <form id="task-form" method="dialog">
+    <h3 id="dialog-title">Create New Task</h3>
+
+    <div class="form-group">
+      <label for="task-title-input">Task Name</label>
+      <input
+        type="text"
+        id="task-title-input"
+        placeholder="e.g. Architect Komorebi SPA engine"
+        required
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-row">
       <div class="form-group">
-        <label for="task-title-input">Task Name</label>
+        <label for="task-priority-select">Priority Flag</label>
+        <select id="task-priority-select">
+          <option value="p3">Normal (!p3)</option>
+          <option value="p2">Medium (!p2)</option>
+          <option value="p1">Urgent (!p1)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="task-status-select">Status Stage</label>
+        <select id="task-status-select">
+          <option value="backlog">Backlog</option>
+          <option value="in-progress">In Progress</option>
+          <option value="ready-qa">Done / Review</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="task-date-input">Due Date</label>
+        <input type="date" id="task-date-input" required />
+      </div>
+      <div class="form-group">
+        <label for="task-tag-input">Tag (Optional)</label>
         <input
           type="text"
-          id="task-title-input"
-          placeholder="e.g. Finish lecture notes"
-          required
+          id="task-tag-input"
+          placeholder="e.g. fitness, deepwork"
           autocomplete="off"
         />
       </div>
+    </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="task-status-select">Status</label>
-          <select id="task-status-select">
-            <option value="backlog">Backlog</option>
-            <option value="in-progress">In Progress</option>
-            <option value="ready-qa">Ready for Review</option>
-          </select>
-        </div>
+    <div class="modal-actions">
+      <button type="button" id="close-dialog-btn" class="btn-secondary">Cancel</button>
+      <button type="submit" class="btn-primary">Save Task</button>
+    </div>
+  </form>
+</dialog>
 
-        <div class="form-group">
-          <label for="task-date-input">Due Date</label>
-          <input type="date" id="task-date-input" required />
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" id="close-dialog-btn" class="secondary-btn">Cancel</button>
-        <button type="submit" class="primary-btn">Save Task</button>
-      </div>
-    </form>
-  </dialog>
-
-  <script type="module" src="js/app.js"></script>
+<!-- Main Controller ES Module -->
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

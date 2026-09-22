@@ -1,112 +1,159 @@
-import { MONTH_NAMES, getDaysInMonth, getFirstWeekdayOfMonth, formatISODate } from '../utils/dateHelpers.js';
+import {
+  MONTH_NAMES,
+  getDaysInMonth,
+  getFirstWeekdayOfMonth,
+  formatISODate,
+  todayISO
+} from '../utils/dateHelpers.js';
 import { icons } from '../utils/icons.js';
 
-// Module-scoped navigation state
-let displayDate = new Date();
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth();
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export function renderCalendarView(container, state) {
-  const year  = displayDate.getFullYear();
-  const month = displayDate.getMonth();
+  const today = todayISO();
+  const tasks = state.getFilteredTasks();
 
-  const today    = new Date();
-  const todayISO = formatISODate(today.getFullYear(), today.getMonth(), today.getDate());
-  const tasks    = state.getFilteredTasks();
+  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
+  const startWeekday = getFirstWeekdayOfMonth(currentYear, currentMonth);
 
-  const daysInMonth  = getDaysInMonth(year, month);
-  const startWeekday = getFirstWeekdayOfMonth(year, month);
+  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  const daysInPrev = getDaysInMonth(prevYear, prevMonth);
 
-  const prevMonth     = month === 0  ? 11 : month - 1;
-  const prevMonthYear = month === 0  ? year - 1 : year;
-  const daysInPrev    = getDaysInMonth(prevMonthYear, prevMonth);
+  const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+  const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
 
-  const nextMonth     = month === 11 ? 0  : month + 1;
-  const nextMonthYear = month === 11 ? year + 1 : year;
+  let cellHTML = '';
 
-  // Build all grid cells
-  let cells = '';
-
-  // Trailing days from previous month
+  // 1. Previous month trailing days
   for (let i = startWeekday - 1; i >= 0; i--) {
     const day = daysInPrev - i;
-    cells += _cell(day, formatISODate(prevMonthYear, prevMonth, day), true, false, tasks);
+    const iso = formatISODate(prevYear, prevMonth, day);
+    cellHTML += _cell(day, iso, true, false, tasks);
   }
 
-  // Current month days
+  // 2. Current month days
   for (let day = 1; day <= daysInMonth; day++) {
-    const iso = formatISODate(year, month, day);
-    cells += _cell(day, iso, false, iso === todayISO, tasks);
+    const iso = formatISODate(currentYear, currentMonth, day);
+    cellHTML += _cell(day, iso, false, iso === today, tasks);
   }
 
-  // Leading days from next month
-  const totalCells  = startWeekday + daysInMonth;
-  const trailingCount = (7 - (totalCells % 7)) % 7;
+  // 3. Next month leading days (fill remaining grid row)
+  const totalCellsSoFar = startWeekday + daysInMonth;
+  const trailingCount = (7 - (totalCellsSoFar % 7)) % 7;
   for (let day = 1; day <= trailingCount; day++) {
-    cells += _cell(day, formatISODate(nextMonthYear, nextMonth, day), true, false, tasks);
+    const iso = formatISODate(nextYear, nextMonth, day);
+    cellHTML += _cell(day, iso, true, false, tasks);
   }
 
   container.innerHTML = `
     <div class="calendar-header-bar">
-      <h2 class="calendar-month-label">${MONTH_NAMES[month]} ${year}</h2>
+      <h2 class="calendar-month-label">${MONTH_NAMES[currentMonth]} ${currentYear}</h2>
       <div class="calendar-nav">
-        <button class="cal-nav-btn" id="cal-prev-btn" aria-label="Previous month">
+        <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month" title="Previous month">
           <span class="icon-slot">${icons.chevronLeft}</span>
         </button>
-        <button class="cal-nav-btn" id="cal-today-btn">Today</button>
-        <button class="cal-nav-btn" id="cal-next-btn" aria-label="Next month">
+        <button class="cal-nav-btn" id="cal-today" title="Jump to Today">Today</button>
+        <button class="cal-nav-btn" id="cal-next" aria-label="Next month" title="Next month">
           <span class="icon-slot">${icons.chevronRight}</span>
         </button>
       </div>
     </div>
     <div class="calendar-grid">
       ${WEEKDAYS.map(d => `<div class="calendar-day-header">${d}</div>`).join('')}
-      ${cells}
+      ${cellHTML}
     </div>`;
 
-  _bindNav(container, state);
+  // Bind navigation listeners
+  const prevBtn = container.querySelector('#cal-prev');
+  const nextBtn = container.querySelector('#cal-next');
+  const todayBtn = container.querySelector('#cal-today');
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendarView(container, state);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendarView(container, state);
+    });
+  }
+
+  if (todayBtn) {
+    todayBtn.addEventListener('click', () => {
+      const now = new Date();
+      currentYear = now.getFullYear();
+      currentMonth = now.getMonth();
+      renderCalendarView(container, state);
+    });
+  }
+
+  // Bind cell click for quick task creation on date
+  container.querySelectorAll('.calendar-cell').forEach(cell => {
+    cell.addEventListener('click', e => {
+      if (e.target.closest('.cal-task-pill')) return;
+      const targetDate = cell.dataset.date;
+      if (targetDate) {
+        const dialog = document.getElementById('task-dialog');
+        const dateInput = document.getElementById('task-date-input');
+        if (dialog && dateInput) {
+          dateInput.value = targetDate;
+          dialog.showModal();
+        }
+      }
+    });
+  });
 }
 
-function _cell(dayNumber, isoDate, isOtherMonth, isToday, tasks) {
-  const dayTasks = tasks.filter(t => t.dueDate === isoDate);
+function _cell(dayNum, iso, isOtherMonth, isToday, tasks) {
+  const dayTasks = tasks.filter(t => t.dueDate === iso);
   return `
-    <div class="calendar-cell${isOtherMonth ? ' other-month' : ''}" data-date="${isoDate}">
+    <div
+      class="calendar-cell${isOtherMonth ? ' other-month' : ''}"
+      data-date="${iso}"
+      title="Click to add task on ${iso}"
+    >
       <div class="calendar-cell-top">
-        <span class="cell-day-number${isToday ? ' is-today' : ''}">${dayNumber}</span>
+        <span class="cell-day-number${isToday ? ' is-today' : ''}">${dayNum}</span>
       </div>
       <div class="calendar-task-stack">
-        ${dayTasks.map(task => `
-          <div class="cal-task-pill${task.completed ? ' completed' : ''}" data-id="${task.id}" title="${esc(task.title)}">
-            <input type="checkbox" class="task-checkbox"${task.completed ? ' checked' : ''} />
-            <span class="task-text">${esc(task.title)}</span>
-          </div>`).join('')}
+        ${dayTasks.map(t => `
+          <div
+            class="cal-task-pill${t.completed ? ' completed' : ''}"
+            data-id="${t.id}"
+            title="${esc(t.title)}"
+          >
+            <input
+              type="checkbox"
+              class="task-checkbox"
+              ${t.completed ? 'checked' : ''}
+              aria-label="Toggle completion"
+            />
+            <span class="task-text">${esc(t.title)}</span>
+          </div>
+        `).join('')}
       </div>
     </div>`;
 }
 
-function _bindNav(container, state) {
-  const prev  = container.querySelector('#cal-prev-btn');
-  const next  = container.querySelector('#cal-next-btn');
-  const today = container.querySelector('#cal-today-btn');
-
-  if (prev) prev.addEventListener('click', () => {
-    displayDate.setMonth(displayDate.getMonth() - 1);
-    renderCalendarView(container, state);
-  });
-
-  if (next) next.addEventListener('click', () => {
-    displayDate.setMonth(displayDate.getMonth() + 1);
-    renderCalendarView(container, state);
-  });
-
-  if (today) today.addEventListener('click', () => {
-    displayDate = new Date();
-    renderCalendarView(container, state);
-  });
-}
-
-function esc(str) {
+function esc(s) {
+  if (!s) return '';
   const d = document.createElement('div');
-  d.textContent = str;
+  d.textContent = s;
   return d.innerHTML;
 }

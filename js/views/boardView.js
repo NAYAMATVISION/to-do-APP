@@ -1,9 +1,10 @@
 import { icons } from '../utils/icons.js';
+import { todayISO, addDaysISO } from '../utils/dateHelpers.js';
 
 const COLUMNS = [
-  { key: 'backlog',     title: 'Backlog',         icon: 'folder'      },
-  { key: 'in-progress', title: 'In Progress',     icon: 'clock'       },
-  { key: 'ready-qa',   title: 'Ready for Review', icon: 'checkCircle' },
+  { key: 'backlog',     title: 'Backlog',      icon: 'folder'      },
+  { key: 'in-progress', title: 'In Progress',  icon: 'clock'       },
+  { key: 'ready-qa',   title: 'Done / Review', icon: 'checkCircle' },
 ];
 
 export function renderBoardView(container, state) {
@@ -12,7 +13,7 @@ export function renderBoardView(container, state) {
   container.innerHTML = `
     <div class="board-view-container">
       ${COLUMNS.map(col => {
-        const colTasks = tasks.filter(t => t.status === col.key);
+        const columnTasks = tasks.filter(t => t.status === col.key);
         return `
           <div class="board-column" data-status="${col.key}">
             <div class="board-column-header">
@@ -20,25 +21,12 @@ export function renderBoardView(container, state) {
                 <span class="icon-slot" aria-hidden="true">${icons[col.icon]}</span>
                 <span>${col.title}</span>
               </div>
-              <span class="column-counter">${colTasks.length}</span>
+              <span class="column-counter">${columnTasks.length}</span>
             </div>
             <div class="board-card-stack" data-dropzone="${col.key}">
-              ${colTasks.length
-                ? colTasks.map(task => `
-                    <div class="board-card${task.completed ? ' completed' : ''}"
-                         draggable="true"
-                         data-id="${task.id}"
-                         data-status="${task.status}">
-                      <div class="board-card-body">
-                        <input type="checkbox" class="task-checkbox"${task.completed ? ' checked' : ''} />
-                        <span class="board-card-title">${esc(task.title)}</span>
-                      </div>
-                      <div class="board-card-footer">
-                        <span class="task-date-pill">${task.dueDate}</span>
-                        <button class="delete-task-btn" aria-label="Delete task">${icons.close}</button>
-                      </div>
-                    </div>`).join('')
-                : '<div class="board-empty-state">No tasks in this lane</div>'
+              ${columnTasks.length
+                ? columnTasks.map(t => _card(t)).join('')
+                : '<div class="board-empty-state">Drop tasks here</div>'
               }
             </div>
           </div>`;
@@ -48,20 +36,61 @@ export function renderBoardView(container, state) {
   _bindDragDrop(container, state);
 }
 
+function _card(t) {
+  const dateBadge = formatDateBadge(t.dueDate);
+  const priorityClass = t.priority || 'p3';
+  return `
+    <div
+      class="board-card${t.completed ? ' completed' : ''}"
+      draggable="true"
+      data-id="${t.id}"
+      data-status="${t.status}"
+    >
+      <div class="board-card-body">
+        <input
+          type="checkbox"
+          class="task-checkbox"
+          ${t.completed ? 'checked' : ''}
+          aria-label="Toggle task completion"
+        />
+        <span class="board-card-title">${esc(t.title)}</span>
+      </div>
+      <div class="board-card-footer">
+        <div class="board-card-meta">
+          <span class="priority-pill ${priorityClass}">${priorityClass.toUpperCase()}</span>
+          <span class="task-date-pill">${dateBadge}</span>
+          ${t.tag ? `<span class="tag-pill">${esc(t.tag)}</span>` : ''}
+        </div>
+        <button class="delete-task-btn" aria-label="Delete task" title="Delete task">
+          ${icons.close}
+        </button>
+      </div>
+    </div>`;
+}
+
 function _bindDragDrop(container, state) {
-  let dragId = null;
+  let draggedId = null;
 
   container.querySelectorAll('.board-card').forEach(card => {
+    card.addEventListener('mousedown', e => {
+      if (e.target.closest('.task-checkbox') || e.target.closest('.delete-task-btn')) {
+        card.setAttribute('draggable', 'false');
+      } else {
+        card.setAttribute('draggable', 'true');
+      }
+    });
+
     card.addEventListener('dragstart', e => {
-      dragId = card.dataset.id;
+      draggedId = card.dataset.id;
       e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', dragId);
+      e.dataTransfer.setData('text/plain', draggedId);
       setTimeout(() => card.classList.add('is-dragging'), 0);
     });
 
     card.addEventListener('dragend', () => {
       card.classList.remove('is-dragging');
-      container.querySelectorAll('.board-card-stack').forEach(z => z.classList.remove('drag-over'));
+      card.setAttribute('draggable', 'true');
+      container.querySelectorAll('.board-card-stack').forEach(zone => zone.classList.remove('drag-over'));
     });
   });
 
@@ -73,21 +102,36 @@ function _bindDragDrop(container, state) {
     });
 
     zone.addEventListener('dragleave', e => {
-      if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+      if (!zone.contains(e.relatedTarget)) {
+        zone.classList.remove('drag-over');
+      }
     });
 
     zone.addEventListener('drop', e => {
       e.preventDefault();
       zone.classList.remove('drag-over');
-      const id     = e.dataTransfer.getData('text/plain') || dragId;
-      const status = zone.dataset.dropzone;
-      if (id && status) state.updateTaskStatus(id, status);
+      const id = e.dataTransfer.getData('text/plain') || draggedId;
+      const targetStatus = zone.dataset.dropzone;
+
+      if (id && targetStatus) {
+        state.updateTaskStatus(id, targetStatus);
+      }
     });
   });
 }
 
-function esc(str) {
+function formatDateBadge(dateStr) {
+  if (!dateStr) return '';
+  const today = todayISO();
+  const tomorrow = addDaysISO(today, 1);
+  if (dateStr === today) return 'Today';
+  if (dateStr === tomorrow) return 'Tomorrow';
+  return dateStr;
+}
+
+function esc(s) {
+  if (!s) return '';
   const d = document.createElement('div');
-  d.textContent = str;
+  d.textContent = s;
   return d.innerHTML;
 }

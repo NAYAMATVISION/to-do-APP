@@ -1,0 +1,903 @@
+/* ==========================================================================
+   Workspace Surface — css/workspace.css
+   ========================================================================== */
+
+#app-surface {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
+}
+
+/* ── Workspace Header & Top Bar ──────────────────────────────────────────── */
+.ws-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(247, 245, 240, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ws-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ws-header-left::-webkit-scrollbar {
+  display: none;
+}
+
+.ws-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+.ws-back-btn:hover {
+  background: var(--bg-subtle);
+}
+
+.ws-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+/* Workspace Switcher Segmented Tabs ("Personal Life" vs "Deep Work") */
+.ws-switcher-tabs {
+  display: flex;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ws-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+.ws-tab-btn:hover {
+  color: var(--text-main);
+}
+.ws-tab-btn.active {
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-xs);
+}
+
+.ws-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* View Toggles (List, Board, Calendar) */
+.view-toggle-group {
+  display: flex;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+.view-toggle-btn:hover {
+  color: var(--text-main);
+}
+.view-toggle-btn.active {
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-xs);
+}
+
+/* User Profile Badge */
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.profile-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--terracotta);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+.sign-out-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 2px;
+  display: flex;
+  align-items: center;
+}
+.sign-out-btn:hover {
+  color: #dc2626;
+}
+
+/* Animated Streak & Completion Ring Pill */
+.streak-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.streak-ring {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.streak-ring svg {
+  width: 22px;
+  height: 22px;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: var(--border-subtle);
+  stroke-width: 2.5;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--olive);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 56.548;  /* 2 * π * 9 */
+  stroke-dashoffset: 56.548;
+  transition: stroke-dashoffset 0.6s var(--ease-smooth);
+}
+
+/* ── Workspace Main Content Body ─────────────────────────────────────────── */
+.ws-body {
+  flex: 1;
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 32px 100px;
+}
+
+.ws-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.ws-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+
+.ws-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ── Natural Language Quick-Add Input Bar ────────────────────────────────── */
+.nlp-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 2px 6px 2px 16px;
+  margin-bottom: 12px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+}
+.nlp-bar:focus-within {
+  border-color: var(--text-main);
+  box-shadow: 0 0 0 3px var(--terracotta-light);
+}
+
+.nlp-bar-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.nlp-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text-main);
+  padding: 14px 0;
+  font-family: var(--font-sans);
+}
+.nlp-input::placeholder {
+  color: var(--text-light);
+}
+
+.nlp-hint {
+  font-size: 11px;
+  color: var(--text-light);
+  padding: 0 12px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.nlp-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--text-main);
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 4px;
+  transition: opacity var(--transition-fast);
+  white-space: nowrap;
+}
+.nlp-submit-btn:hover {
+  opacity: 0.88;
+}
+
+/* NLP Live Preview Chips */
+.nlp-preview {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.nlp-preview.visible {
+  display: flex;
+}
+.nlp-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.nlp-preview-chip span {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* View Mount Point Container */
+#app-view {
+  min-height: 400px;
+}
+
+/* ==========================================================================
+   List View
+   ========================================================================== */
+.list-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.list-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-group-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.group-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1px 8px;
+  line-height: 1.6;
+}
+
+.task-list {
+  list-style: none;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+.task-item:hover {
+  background: var(--bg-card-hover);
+  border-radius: var(--radius-xs);
+}
+.task-item:hover .delete-task-btn {
+  opacity: 1;
+}
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.task-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.task-text {
+  font-size: 14px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-item-empty {
+  padding: 20px 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Kanban Board View
+   ========================================================================== */
+.board-view-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+
+.board-column {
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  padding: 16px;
+}
+
+.board-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.board-header-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.column-counter {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(25, 24, 23, 0.06);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.board-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  transition: background var(--transition-fast);
+  min-height: 100px;
+}
+
+.board-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: grab;
+  transition: transform 0.12s var(--ease-smooth), box-shadow 0.12s var(--ease-smooth), border-color 0.12s var(--ease-smooth);
+  user-select: none;
+}
+.board-card:active {
+  cursor: grabbing;
+}
+.board-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-strong);
+}
+.board-card:hover .delete-task-btn {
+  opacity: 1;
+}
+
+.board-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.board-card-body .task-checkbox {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.board-card-title {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-main);
+  font-weight: 500;
+  word-break: break-word;
+}
+.board-card.completed .board-card-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.board-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.board-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.board-empty-state {
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 28px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.board-card.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
+.board-card-stack.drag-over {
+  background: var(--terracotta-light);
+  outline: 1.5px dashed var(--terracotta);
+  outline-offset: -1px;
+}
+
+/* ==========================================================================
+   Calendar View
+   ========================================================================== */
+.calendar-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-month-label {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-main);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.cal-nav-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-strong);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--border-subtle);
+  border-left: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+
+.calendar-day-header {
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: right;
+  background: var(--bg-subtle);
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.calendar-cell {
+  min-height: 104px;
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.calendar-cell:hover {
+  background: var(--bg-card-hover);
+}
+
+.calendar-cell.other-month {
+  background: rgba(25, 24, 23, 0.015);
+}
+.calendar-cell.other-month .cell-day-number {
+  color: #ccc8be;
+}
+
+.calendar-cell-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2px;
+}
+
+.cell-day-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.cell-day-number.is-today {
+  background: var(--terracotta);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.calendar-task-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cal-task-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xs);
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+.cal-task-pill:hover {
+  border-color: var(--border-strong);
+}
+.cal-task-pill.completed {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+/* ==========================================================================
+   Pomodoro Focus Dock (Floating Widget)
+   ========================================================================== */
+.pomodoro-dock {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 90;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 14px 20px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform var(--transition-normal);
+}
+
+.pomo-time-display {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  min-width: 70px;
+}
+
+.pomo-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--terracotta);
+}
+
+.pomo-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pomo-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.pomo-btn:hover {
+  background: var(--text-main);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   Task Creation Dialog Modal (<dialog id="task-dialog">)
+   ========================================================================== */
+.task-modal {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  margin: auto;
+  animation: modalReveal 0.25s var(--ease-smooth);
+}
+.task-modal::backdrop {
+  background: var(--bg-overlay);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.task-modal h3 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-main);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.form-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  outline: none;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  background: var(--bg-card);
+  transition: border-color var(--transition-fast);
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--text-main);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+/* ── Responsive Mobile Ribbon & Controls (<420px) ────────────────────────── */
+@media (max-width: 640px) {
+  .ws-header {
+    padding: 0 16px;
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .ws-header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ws-header-right {
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    padding-top: 4px;
+  }
+
+  .ws-body {
+    padding: 20px 16px 120px;
+  }
+
+  .board-view-container {
+    grid-template-columns: 1fr;
+  }
+
+  .nlp-hint {
+    display: none;
+  }
+
+  .pomodoro-dock {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    justify-content: space-between;
+  }
+}
