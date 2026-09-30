@@ -19,6 +19,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background-color var(--transition-normal);
 }
 
 img, svg {
@@ -42,15 +43,6 @@ ul, ol {
   list-style: none;
 }
 
-/* ── Typography Display Helpers ──────────────────────────────────────────── */
-.font-serif {
-  font-family: var(--font-serif);
-}
-
-.font-mono {
-  font-family: var(--font-mono);
-}
-
 /* ── Shared Icon Slot Primitive ─────────────────────────────────────────── */
 .icon-slot {
   display: inline-flex;
@@ -58,11 +50,13 @@ ul, ol {
   justify-content: center;
   line-height: 0;
   flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 .icon-slot svg {
   display: block;
-  width: 16px;
-  height: 16px;
+  width: 100%;
+  height: 100%;
 }
 
 /* ── Button System Primitives ────────────────────────────────────────────── */
@@ -71,19 +65,19 @@ ul, ol {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--text-main);
+  background: var(--domain-accent);
   color: #ffffff;
-  border: 1px solid var(--text-main);
+  border: 1px solid var(--domain-accent);
   padding: 10px 20px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
 }
 .btn-primary:hover {
-  opacity: 0.88;
+  opacity: 0.9;
   transform: translateY(-1px);
 }
 .btn-primary:active {
@@ -111,28 +105,6 @@ ul, ol {
   border-color: var(--text-main);
   transform: translateY(-1px);
 }
-.btn-secondary:active {
-  transform: translateY(0);
-}
-
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  padding: 7px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-.btn-ghost:hover {
-  background: var(--bg-subtle);
-  color: var(--text-main);
-}
 
 /* ── Custom Circular Checkbox Primitive ──────────────────────────────────── */
 .task-checkbox {
@@ -150,11 +122,11 @@ ul, ol {
   transition: background var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 .task-checkbox:hover {
-  border-color: var(--terracotta);
+  border-color: var(--domain-accent);
 }
 .task-checkbox:checked {
-  background: var(--olive);
-  border-color: var(--olive);
+  background: var(--domain-accent);
+  border-color: var(--domain-accent);
 }
 .task-checkbox:checked::after {
   content: '';
@@ -199,8 +171,9 @@ ul, ol {
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 20px;
-  background: var(--terracotta-light);
-  color: var(--terracotta);
+  background: var(--domain-bg-tint);
+  color: var(--domain-accent);
+  border: 1px solid var(--domain-border-tint);
   text-transform: lowercase;
   letter-spacing: 0.02em;
 }

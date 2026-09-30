@@ -4,14 +4,14 @@ import { todayISO, addDaysISO, getNextWeekdayISO } from './dateHelpers.js';
  * Natural Language Task Input Parser Engine
  * Extracts:
  *   - Title
- *   - Tag: @tag (e.g., @fitness, @goals, @deepwork)
+ *   - Tag: @tag (e.g., @fitness, @deepwork, @habits, @grocery)
  *   - Priority: !p1 (high), !p2 (medium), !p3 (low)
  *   - Date: today, tomorrow, friday, in N days, or YYYY-MM-DD
  *
  * Example inputs:
- *   - "Morning run tomorrow @fitness !p1"
- *   - "Prepare quarterly deck friday @goals !p2"
- *   - "Buy groceries today @errands"
+ *   - "Morning 20-min run tomorrow @fitness !p1"
+ *   - "2-hour deep work sprint friday @deepwork !p1"
+ *   - "Pantry essentials restock today @grocery !p2"
  *
  * @param {string} raw - Raw input string
  * @returns {{ title: string, dueDate: string, tag: string|null, priority: 'p1'|'p2'|'p3' } | null}
@@ -29,7 +29,7 @@ export function parseNLP(raw) {
     text = text.replace(pMatch[0], '').trim();
   }
 
-  // 2. Extract @tag (e.g. @fitness, @goals, @errands)
+  // 2. Extract @tag (e.g. @fitness, @deepwork, @habits, @grocery)
   let tag = null;
   const tagMatch = text.match(/@([\w-]+)/i);
   if (tagMatch) {

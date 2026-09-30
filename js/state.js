@@ -7,17 +7,25 @@ const tomorrow = addDaysISO(today, 1);
 
 function getDefaultTasks() {
   return [
-    // ── Personal Life Workspace ───────────────────────────────────────────
-    { id: 'p1', title: 'Morning 20-min run & stretch',    workspace: 'personal', status: 'in-progress', dueDate: today,    tag: 'fitness',  priority: 'p1', completed: false },
-    { id: 'p2', title: 'Hydrate — Drink 8 glasses water', workspace: 'personal', status: 'backlog',     dueDate: today,    tag: 'health',   priority: 'p3', completed: false },
-    { id: 'p3', title: 'Pick up organic produce & oats', workspace: 'personal', status: 'backlog',     dueDate: today,    tag: 'grocery',  priority: 'p2', completed: false },
-    { id: 'p4', title: 'Read 25 pages of Newsreader',     workspace: 'personal', status: 'ready-qa',    dueDate: today,    tag: 'reading',  priority: 'p3', completed: true  },
+    // ── 1. Fitness & Health Domain ──────────────────────────────────────────
+    { id: 'fit-1', title: 'Morning 20-min workout & stretch',    domain: 'fitness', status: 'in-progress', dueDate: today,    tag: 'fitness',  priority: 'p1', completed: false },
+    { id: 'fit-2', title: 'Drink 8 glasses of water',             domain: 'fitness', status: 'backlog',     dueDate: today,    tag: 'health',   priority: 'p3', completed: false },
+    { id: 'fit-3', title: 'Evening core & flexibility routine',   domain: 'fitness', status: 'backlog',     dueDate: today,    tag: 'fitness',  priority: 'p2', completed: false },
 
-    // ── Deep Work Workspace ──────────────────────────────────────────────
-    { id: 'w1', title: 'Architect Komorebi SPA engine',   workspace: 'work',     status: 'in-progress', dueDate: today,    tag: 'deepwork', priority: 'p1', completed: false },
-    { id: 'w2', title: 'Review Q4 product roadmap OKRs',  workspace: 'work',     status: 'backlog',     dueDate: tomorrow, tag: 'planning', priority: 'p2', completed: false },
-    { id: 'w3', title: 'Audit web audio API sound chime', workspace: 'work',     status: 'backlog',     dueDate: tomorrow, tag: 'audio',    priority: 'p2', completed: false },
-    { id: 'w4', title: 'Finalize Vanilla JS state manager',workspace: 'work',    status: 'ready-qa',    dueDate: today,    tag: 'code',     priority: 'p1', completed: true  },
+    // ── 2. Habit Formation Domain ───────────────────────────────────────────
+    { id: 'hab-1', title: 'Read 25 pages non-fiction',            domain: 'habits',  status: 'in-progress', dueDate: today,    tag: 'reading',  priority: 'p3', completed: false },
+    { id: 'hab-2', title: 'Daily reflection journal',            domain: 'habits',  status: 'backlog',     dueDate: today,    tag: 'mindset',  priority: 'p2', completed: false },
+    { id: 'hab-3', title: '10-minute mindfulness session',        domain: 'habits',  status: 'ready-qa',    dueDate: today,    tag: 'health',   priority: 'p3', completed: true  },
+
+    // ── 3. Deep Work Sprint Domain ──────────────────────────────────────────
+    { id: 'dw-1',  title: '2-hour uninterrupted focus sprint',    domain: 'deepwork', status: 'in-progress', dueDate: today,    tag: 'deepwork', priority: 'p1', completed: false },
+    { id: 'dw-2',  title: 'Audit architecture code & tests',      domain: 'deepwork', status: 'backlog',     dueDate: tomorrow, tag: 'code',     priority: 'p2', completed: false },
+    { id: 'dw-3',  title: 'Review Q4 product roadmap OKRs',       domain: 'deepwork', status: 'backlog',     dueDate: tomorrow, tag: 'planning', priority: 'p2', completed: false },
+
+    // ── 4. Grocery & Errands Domain ─────────────────────────────────────────
+    { id: 'err-1', title: 'Pantry essentials restock',            domain: 'errands',  status: 'backlog',     dueDate: today,    tag: 'grocery',  priority: 'p2', completed: false },
+    { id: 'err-2', title: 'Pick up prescription at pharmacy',     domain: 'errands',  status: 'in-progress', dueDate: today,    tag: 'health',   priority: 'p1', completed: false },
+    { id: 'err-3', title: 'Weekly meal prep items & greens',      domain: 'errands',  status: 'backlog',     dueDate: tomorrow, tag: 'grocery',  priority: 'p3', completed: false },
   ];
 }
 
@@ -34,8 +42,21 @@ class StateManager {
     const userId = auth.userId;
     const saved = storage.getTasks(userId);
     this.tasks = saved ?? getDefaultTasks();
-    this.activeWorkspace = storage.getWorkspace(userId);
-    this.currentView = storage.getView(userId);
+
+    // Standardize legacy 'workspace' field to 'domain'
+    this.tasks.forEach(t => {
+      if (!t.domain) {
+        if (t.workspace === 'work') t.domain = 'deepwork';
+        else if (t.workspace === 'personal') t.domain = 'fitness';
+        else t.domain = t.workspace || 'fitness';
+      }
+    });
+
+    this.activeDomain = storage.getDomain(userId);
+    this.currentView   = storage.getView(userId);
+
+    // Apply dynamic body data-domain attribute for CSS theme switching
+    document.body.dataset.domain = this.activeDomain;
 
     if (!saved) {
       storage.saveTasks(userId, this.tasks);
@@ -52,31 +73,44 @@ class StateManager {
 
   _notify() {
     const userId = auth.userId;
+    document.body.dataset.domain = this.activeDomain;
+
     storage.saveTasks(userId, this.tasks);
-    storage.saveWorkspace(userId, this.activeWorkspace);
+    storage.saveDomain(userId, this.activeDomain);
     storage.saveView(userId, this.currentView);
+
     this._listeners.forEach(fn => fn());
   }
 
   /* ── Queries ─────────────────────────────────────────────────────────────── */
   getFilteredTasks() {
-    return this.tasks.filter(t => t.workspace === this.activeWorkspace);
+    return this.tasks.filter(t => t.domain === this.activeDomain);
+  }
+
+  getDomainTaskCounts() {
+    const counts = { fitness: 0, habits: 0, deepwork: 0, errands: 0 };
+    this.tasks.forEach(t => {
+      if (counts[t.domain] !== undefined) {
+        counts[t.domain]++;
+      }
+    });
+    return counts;
   }
 
   getTodayStats() {
-    const todayTasks = this.tasks.filter(
-      t => t.workspace === this.activeWorkspace && t.dueDate === todayISO()
-    );
+    const domainTasks = this.getFilteredTasks();
+    const todayTasks  = domainTasks.filter(t => t.dueDate === todayISO());
     const total = todayTasks.length;
-    const done = todayTasks.filter(t => t.completed).length;
-    const pct = total ? Math.round((done / total) * 100) : 0;
+    const done  = todayTasks.filter(t => t.completed).length;
+    const pct   = total ? Math.round((done / total) * 100) : 0;
     return { total, done, pct };
   }
 
   /* ── Mutations ───────────────────────────────────────────────────────────── */
-  setWorkspace(ws) {
-    if (this.activeWorkspace !== ws) {
-      this.activeWorkspace = ws;
+  setDomain(domainKey) {
+    const valid = ['fitness', 'habits', 'deepwork', 'errands'];
+    if (valid.includes(domainKey) && this.activeDomain !== domainKey) {
+      this.activeDomain = domainKey;
       this._notify();
     }
   }
@@ -93,7 +127,7 @@ class StateManager {
     const newTask = {
       id: `t-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       title,
-      workspace: this.activeWorkspace,
+      domain: this.activeDomain,
       status,
       dueDate: dueDate || todayISO(),
       tag: tag ? tag.toLowerCase() : null,
@@ -104,16 +138,16 @@ class StateManager {
     this._notify();
   }
 
-  seedTemplate(workspaceId, tasks) {
-    this.activeWorkspace = workspaceId;
-    this.tasks = this.tasks.filter(t => t.workspace !== workspaceId);
+  seedTemplate(domainKey, tasks) {
+    this.activeDomain = domainKey;
+    this.tasks = this.tasks.filter(t => t.domain !== domainKey);
 
     const now = Date.now();
     tasks.forEach((t, i) => {
       const isDone = t.status === 'ready-qa';
       this.tasks.push({
         id: `tpl-${now}-${i}`,
-        workspace: workspaceId,
+        domain: domainKey,
         status: t.status || 'backlog',
         dueDate: t.dueDate || todayISO(),
         tag: t.tag || null,
@@ -150,6 +184,31 @@ class StateManager {
   deleteTask(id) {
     this.tasks = this.tasks.filter(t => t.id !== id);
     this._notify();
+  }
+
+  /* ── Custom Domain Actions ───────────────────────────────────────────────── */
+  triggerDomainAction(domainKey) {
+    const today = todayISO();
+    switch (domainKey) {
+      case 'fitness':
+        this.addTask({ title: 'Drink 500ml water', status: 'ready-qa', dueDate: today, tag: 'health', priority: 'p3' });
+        this.addTask({ title: 'Post-work 15-min stretch', status: 'in-progress', dueDate: today, tag: 'fitness', priority: 'p2' });
+        break;
+      case 'habits':
+        this.getFilteredTasks().forEach(t => {
+          t.completed = true;
+          t.status = 'ready-qa';
+        });
+        this._notify();
+        break;
+      case 'deepwork':
+        this.addTask({ title: 'URGENT: Resolve sprint blocker !p1', status: 'in-progress', dueDate: today, tag: 'code', priority: 'p1' });
+        break;
+      case 'errands':
+        this.tasks = this.tasks.filter(t => !(t.domain === 'errands' && t.completed));
+        this._notify();
+        break;
+    }
   }
 }
 

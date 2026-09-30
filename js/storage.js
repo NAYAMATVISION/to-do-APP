@@ -71,22 +71,22 @@ export const storage = {
     }
   },
 
-  // ── Workspace State ──────────────────────────────────────────────────────
-  getWorkspace(userId) {
+  // ── Domain Workspace State ───────────────────────────────────────────────
+  getDomain(userId) {
     try {
-      const key = userId ? `komorebi_ws_${userId}` : 'komorebi_ws_demo';
-      return localStorage.getItem(key) || 'personal';
+      const key = userId ? `komorebi_domain_${userId}` : 'komorebi_domain_demo';
+      return localStorage.getItem(key) || 'fitness';
     } catch {
-      return 'personal';
+      return 'fitness';
     }
   },
 
-  saveWorkspace(userId, ws) {
+  saveDomain(userId, domain) {
     try {
-      const key = userId ? `komorebi_ws_${userId}` : 'komorebi_ws_demo';
-      localStorage.setItem(key, ws);
+      const key = userId ? `komorebi_domain_${userId}` : 'komorebi_domain_demo';
+      localStorage.setItem(key, domain);
     } catch (err) {
-      console.warn('Workspace save failed:', err);
+      console.warn('Domain save failed:', err);
     }
   },
 

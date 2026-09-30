@@ -1,5 +1,5 @@
 :root {
-  /* Warm Architectural Palette */
+  /* Default Architectural Palette */
   --bg-app:          #f7f5f0;
   --bg-subtle:       #f2efe9;
   --bg-card:         #ffffff;
@@ -16,23 +16,16 @@
   --text-muted:      #64625d;
   --text-light:      #9c988f;
 
-  /* Accents — Terracotta & Olive */
-  --terracotta:        #c86d51;
-  --terracotta-dark:   #b55239;
-  --terracotta-light:  rgba(200, 109, 81, 0.12);
-
-  --olive:             #556b2f;
-  --olive-dark:        #435624;
-  --olive-light:       rgba(85, 107, 47, 0.12);
-
-  --accent-primary:    #191817;
-  --accent-secondary:  #c86d51;
-  --accent-subtle:     rgba(200, 109, 81, 0.08);
+  /* Default Domain Theme Tokens */
+  --domain-accent:   #c86d51;
+  --domain-accent-dark: #b55239;
+  --domain-bg-tint:  #fbf5f2;
+  --domain-border-tint: rgba(200, 109, 81, 0.25);
 
   /* Status Colors */
   --status-backlog:    #75716b;
-  --status-progress:   #c86d51;
-  --status-done:       #556b2f;
+  --status-progress:   var(--domain-accent);
+  --status-done:       #5e6b4e;
 
   /* Priority Flag Colors */
   --priority-p1:       #b91c1c;
@@ -65,4 +58,36 @@
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   --transition-fast: 0.15s var(--ease-smooth);
   --transition-normal: 0.25s var(--ease-smooth);
+}
+
+/* ── Domain 1: Fitness & Health (Terracotta & Coral) ─────────────────────── */
+body[data-domain="fitness"] {
+  --domain-accent:      #c86d51;
+  --domain-accent-dark: #b55239;
+  --domain-bg-tint:     #fbf5f2;
+  --domain-border-tint: rgba(200, 109, 81, 0.25);
+}
+
+/* ── Domain 2: Habit Formation (Sage & Olive) ───────────────────────────── */
+body[data-domain="habits"] {
+  --domain-accent:      #5e6b4e;
+  --domain-accent-dark: #47533a;
+  --domain-bg-tint:     #f4f6f1;
+  --domain-border-tint: rgba(94, 107, 78, 0.25);
+}
+
+/* ── Domain 3: Deep Work Sprint (Obsidian Slate & Indigo) ───────────────── */
+body[data-domain="deepwork"] {
+  --domain-accent:      #2e3a4e;
+  --domain-accent-dark: #1e2736;
+  --domain-bg-tint:     #f2f4f7;
+  --domain-border-tint: rgba(46, 58, 78, 0.25);
+}
+
+/* ── Domain 4: Grocery & Errands (Warm Ochre & Amber) ───────────────────── */
+body[data-domain="errands"] {
+  --domain-accent:      #b57a2b;
+  --domain-accent-dark: #98631f;
+  --domain-bg-tint:     #faf6f0;
+  --domain-border-tint: rgba(181, 122, 43, 0.25);
 }

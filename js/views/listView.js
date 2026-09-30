@@ -7,8 +7,37 @@ const GROUPS = [
   { key: 'ready-qa',   title: 'Done / Review', icon: 'checkCircle' },
 ];
 
+const DOMAIN_EMPTY_MAP = {
+  fitness:  { title: 'No fitness goals added yet', desc: 'Add water tracking, workout routines, or stretching goals to stay active.', icon: 'fitness' },
+  habits:   { title: 'No daily habits logged',     desc: 'Build consistency by adding reading, journaling, or mindfulness habits.', icon: 'target' },
+  deepwork: { title: 'No deep work sprints active', desc: 'Lock in focus by starting a 2-hour sprint or adding technical tasks.', icon: 'brain' },
+  errands:  { title: 'No errands in list',          desc: 'Keep your day organized by adding grocery items, prescriptions, or errands.', icon: 'shopping' },
+};
+
 export function renderListView(container, state) {
   const tasks = state.getFilteredTasks();
+
+  if (tasks.length === 0) {
+    const meta = DOMAIN_EMPTY_MAP[state.activeDomain] || DOMAIN_EMPTY_MAP.fitness;
+    container.innerHTML = `
+      <div class="domain-empty-state">
+        <div class="domain-empty-icon icon-slot">${icons[meta.icon]}</div>
+        <h3 class="domain-empty-title">${meta.title}</h3>
+        <p class="domain-empty-desc">${meta.desc}</p>
+        <button class="btn-primary" id="empty-add-btn" style="margin-top:8px;">
+          <span class="icon-slot">${icons.plus}</span> Add First Task
+        </button>
+      </div>`;
+
+    const addBtn = container.querySelector('#empty-add-btn');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        const dialog = document.getElementById('task-dialog');
+        if (dialog) dialog.showModal();
+      });
+    }
+    return;
+  }
 
   container.innerHTML = `
     <div class="list-view-container">
@@ -24,7 +53,7 @@ export function renderListView(container, state) {
             <ul class="task-list">
               ${groupTasks.length
                 ? groupTasks.map(t => _taskRow(t)).join('')
-                : '<li class="task-item-empty">No tasks in this stage</li>'
+                : '<li class="task-item-empty" style="padding:16px 8px;font-size:13px;color:var(--text-muted);font-style:italic;">No tasks in this stage</li>'
               }
             </ul>
           </section>`;

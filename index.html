@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Komorebi Workspace — Personal Life &amp; Deep Work</title>
-  <meta name="description" content="A production-grade, commercial-quality personal task and life management workspace built with Vanilla JavaScript, HTML5, and CSS3. Featuring Natural Language Parsing, Triple Views, and Zero-Asset Audio Pomodoro Dock." />
+  <title>Komorebi Workspace — Themed Domain Productivity</title>
+  <meta name="description" content="A production-grade, commercial-quality personal task and life management workspace built with Vanilla JavaScript, HTML5, and CSS3. Featuring 4 Themed Domain Workspaces, Scroll-Driven Animations, Natural Language Parsing, and Web Audio Pomodoro Dock." />
 
   <!-- Google Fonts Display Serif & Sans-Serif Stacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,7 +17,19 @@
   <link rel="stylesheet" href="css/landing.css" />
   <link rel="stylesheet" href="css/workspace.css" />
 </head>
-<body>
+<body data-domain="fitness">
+
+<!-- Ambient Canvas Background Aura Orbs (Universal Background) -->
+<canvas id="aura-canvas"></canvas>
+
+<!-- Tactile Paper Grain Noise Texture SVG Filter Overlay -->
+<svg class="paper-grain-overlay" aria-hidden="true">
+  <filter id="grain-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#grain-filter)"/>
+</svg>
 
 <!-- ══════════════════════════════════════════════════════════════════════════
      SURFACE 1 — LANDING MARKETING & AUTH SURFACE
@@ -26,14 +38,14 @@
 
   <!-- ── Editorial Navbar ────────────────────────────────────────────────── -->
   <nav class="landing-nav" aria-label="Main Navigation">
-    <a href="#" class="nav-brand">
-      <div class="nav-brand-mark" data-icon="logo" aria-hidden="true"></div>
+    <a href="#" class="nav-brand decrypt-on-hover">
+      <div class="nav-brand-mark icon-slot" data-icon="logo" aria-hidden="true"></div>
       Komorebi
     </a>
 
     <div class="nav-links" role="list">
       <a href="#features" class="nav-link" role="listitem">Features</a>
-      <a href="#templates" class="nav-link" role="listitem">Templates</a>
+      <a href="#templates" class="nav-link" role="listitem">Workspaces</a>
       <a href="#philosophy" class="nav-link" role="listitem">Philosophy</a>
       <a href="#faq" class="nav-link" role="listitem">FAQ</a>
     </div>
@@ -42,32 +54,34 @@
       <button class="btn-secondary" id="nav-signin-btn">Sign In</button>
       <button class="btn-primary" data-action="open-demo">
         Launch App
-        <span data-icon="arrowRight" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
       </button>
     </div>
   </nav>
 
-  <!-- ── Hero Section ────────────────────────────────────────────────────── -->
-  <section class="hero-section" aria-labelledby="hero-headline">
+  <!-- ── Hero Section with Scroll Reveal & Line Masking ─────────────────── -->
+  <section class="hero-section reveal-on-scroll" aria-labelledby="hero-headline">
     <div class="hero-content">
       <div class="hero-eyebrow">
-        <span data-icon="spark" aria-hidden="true"></span>
-        Editorial Minimalist Productivity
+        <span class="icon-slot" data-icon="spark" aria-hidden="true"></span>
+        Scroll-Driven Editorial Minimalist Productivity
       </div>
 
-      <h1 class="hero-headline" id="hero-headline">
-        Clarity, <em>finally.</em> Crafted for deep work &amp; life.
-      </h1>
+      <div class="line-mask">
+        <h1 class="hero-headline reveal-line" id="hero-headline">
+          Clarity, <em>finally.</em> Four themed workspaces for <span id="kinetic-word-switcher" class="kinetic-word-accent">Deep Work Sprints</span>.
+        </h1>
+      </div>
 
       <p class="hero-sub">
-        One calm, architectural workspace designed to organize your daily habits,
-        deep work sprints, and personal goals — without distraction.
+        An architectural productivity engine featuring 4 isolated domain workspaces:
+        Fitness &amp; Health, Habit Formation, Deep Work Sprint, and Grocery &amp; Errands.
       </p>
 
       <div class="hero-actions">
         <button class="btn-primary hero-cta" data-action="open-demo">
           Try Demo Workspace
-          <span data-icon="arrowRight" aria-hidden="true"></span>
+          <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
         </button>
         <button class="btn-secondary hero-cta" id="hero-register-btn">Create Free Account</button>
       </div>
@@ -79,8 +93,8 @@
     <div class="hero-mockup-wrap">
       <div class="mockup-header">
         <div class="mockup-title">
-          <span data-icon="brain" aria-hidden="true"></span>
-          Komorebi Workspace Preview
+          <span class="icon-slot" data-icon="brain" aria-hidden="true"></span>
+          Komorebi Deep Work Preview
         </div>
         <div class="mockup-pills">
           <span class="tag-pill">@deepwork</span>
@@ -91,14 +105,14 @@
         <div class="mockup-task-row">
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="checkbox" class="task-checkbox" checked readOnly />
-            <span style="text-decoration:line-through;color:var(--text-muted);">Architect Komorebi SPA engine @deepwork !p1</span>
+            <span style="text-decoration:line-through;color:var(--text-muted);">2-hour uninterrupted focus sprint @deepwork !p1</span>
           </div>
           <span class="task-date-pill">Today</span>
         </div>
         <div class="mockup-task-row">
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="checkbox" class="task-checkbox" readOnly />
-            <span>Review Q4 product roadmap OKRs @planning !p2</span>
+            <span>Audit architecture code &amp; unit tests @code !p2</span>
           </div>
           <span class="task-date-pill">Tomorrow</span>
         </div>
@@ -106,117 +120,142 @@
     </div>
   </section>
 
-  <!-- ── Template Shelf Showcase ─────────────────────────────────────────── -->
+  <!-- ── Infinite Kinetic Typographic Marquee Ticker Strip ──────────────── -->
+  <section class="marquee-section" aria-hidden="true">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <span>DISCIPLINE</span><span class="marquee-dot">&bull;</span>
+        <span>INTENTIONALITY</span><span class="marquee-dot">&bull;</span>
+        <span>SOMATIC WELLNESS</span><span class="marquee-dot">&bull;</span>
+        <span>DEEP WORK</span><span class="marquee-dot">&bull;</span>
+        <span>ZERO FRICTION</span><span class="marquee-dot">&bull;</span>
+        <span>RECLAIM FOCUS</span><span class="marquee-dot">&bull;</span>
+      </div>
+      <div class="marquee-content">
+        <span>DISCIPLINE</span><span class="marquee-dot">&bull;</span>
+        <span>INTENTIONALITY</span><span class="marquee-dot">&bull;</span>
+        <span>SOMATIC WELLNESS</span><span class="marquee-dot">&bull;</span>
+        <span>DEEP WORK</span><span class="marquee-dot">&bull;</span>
+        <span>ZERO FRICTION</span><span class="marquee-dot">&bull;</span>
+        <span>RECLAIM FOCUS</span><span class="marquee-dot">&bull;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4 Themed Workspaces Template Showcase Shelf ──────────────────────── -->
   <section id="templates" class="templates-section" aria-labelledby="templates-title">
     <div class="section-wrap">
-      <p class="section-label">Presets</p>
-      <h2 class="section-title" id="templates-title">Start with a curated template</h2>
-      <p class="section-sub">Select a ready-made workspace structure and jump straight into execution.</p>
+      <p class="section-label">Isolated Domains</p>
+      <h2 class="section-title" id="templates-title">Four dedicated, themed workspaces</h2>
+      <p class="section-sub">Choose a domain workspace to load its dedicated metrics, color accents, and isolated task store.</p>
 
-      <div class="template-grid">
+      <div class="template-grid reveal-grid">
 
-        <!-- Fitness & Health -->
-        <article class="template-card">
-          <div class="template-icon-wrap" style="background:var(--terracotta-light);color:var(--terracotta);">
-            <span data-icon="fitness" aria-hidden="true"></span>
+        <!-- 1. Fitness & Health -->
+        <article class="template-card reveal-on-scroll" data-domain="fitness">
+          <div class="template-icon-wrap">
+            <span class="icon-slot" data-icon="fitness" aria-hidden="true"></span>
           </div>
-          <h3 class="template-name">Fitness &amp; Health</h3>
+          <h3 class="template-name decrypt-on-hover">Fitness &amp; Health</h3>
           <div class="template-tasks">
-            <div class="template-task-row"><span class="template-task-dot"></span>Morning 20-min workout</div>
-            <div class="template-task-row"><span class="template-task-dot"></span>Hydrate 8 glasses water</div>
-            <div class="template-task-row"><span class="template-task-dot"></span>Evening stretching routine</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Morning 20-min workout &amp; stretch</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Drink 8 glasses of water</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Evening core routine</div>
           </div>
-          <button class="template-use-btn" data-template="fitness">Load Template</button>
+          <button class="template-use-btn" data-template="fitness">Open Workspace</button>
         </article>
 
-        <!-- Habit Formation -->
-        <article class="template-card">
-          <div class="template-icon-wrap" style="background:var(--olive-light);color:var(--olive);">
-            <span data-icon="target" aria-hidden="true"></span>
+        <!-- 2. Habit Formation -->
+        <article class="template-card reveal-on-scroll" data-domain="habits">
+          <div class="template-icon-wrap">
+            <span class="icon-slot" data-icon="target" aria-hidden="true"></span>
           </div>
-          <h3 class="template-name">Habit Formation</h3>
+          <h3 class="template-name decrypt-on-hover">Habit Formation</h3>
           <div class="template-tasks">
             <div class="template-task-row"><span class="template-task-dot"></span>Read 25 pages non-fiction</div>
             <div class="template-task-row"><span class="template-task-dot"></span>Daily reflection journal</div>
-            <div class="template-task-row"><span class="template-task-dot"></span>10-minute mindfulness</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>10-min mindfulness session</div>
           </div>
-          <button class="template-use-btn" data-template="habits">Load Template</button>
+          <button class="template-use-btn" data-template="habits">Open Workspace</button>
         </article>
 
-        <!-- Deep Work Sprint -->
-        <article class="template-card">
-          <div class="template-icon-wrap" style="background:rgba(25,24,23,0.06);color:var(--text-main);">
-            <span data-icon="brain" aria-hidden="true"></span>
+        <!-- 3. Deep Work Sprint -->
+        <article class="template-card reveal-on-scroll" data-domain="deepwork">
+          <div class="template-icon-wrap">
+            <span class="icon-slot" data-icon="brain" aria-hidden="true"></span>
           </div>
-          <h3 class="template-name">Deep Work Sprint</h3>
+          <h3 class="template-name decrypt-on-hover">Deep Work Sprint</h3>
           <div class="template-tasks">
             <div class="template-task-row"><span class="template-task-dot"></span>2-hour uninterrupted focus</div>
             <div class="template-task-row"><span class="template-task-dot"></span>Audit architecture code</div>
-            <div class="template-task-row"><span class="template-task-dot"></span>Ship production release</div>
+            <div class="template-task-row"><span class="template-task-dot"></span>Review Q4 product OKRs</div>
           </div>
-          <button class="template-use-btn" data-template="deepwork">Load Template</button>
+          <button class="template-use-btn" data-template="deepwork">Open Workspace</button>
         </article>
 
-        <!-- Grocery & Errands -->
-        <article class="template-card">
-          <div class="template-icon-wrap" style="background:var(--terracotta-light);color:var(--terracotta);">
-            <span data-icon="shopping" aria-hidden="true"></span>
+        <!-- 4. Grocery & Errands -->
+        <article class="template-card reveal-on-scroll" data-domain="errands">
+          <div class="template-icon-wrap">
+            <span class="icon-slot" data-icon="shopping" aria-hidden="true"></span>
           </div>
-          <h3 class="template-name">Grocery &amp; Errands</h3>
+          <h3 class="template-name decrypt-on-hover">Grocery &amp; Errands</h3>
           <div class="template-tasks">
             <div class="template-task-row"><span class="template-task-dot"></span>Pantry essentials restock</div>
             <div class="template-task-row"><span class="template-task-dot"></span>Pick up prescription</div>
             <div class="template-task-row"><span class="template-task-dot"></span>Weekly meal prep items</div>
           </div>
-          <button class="template-use-btn" data-template="grocery">Load Template</button>
+          <button class="template-use-btn" data-template="errands">Open Workspace</button>
         </article>
 
       </div>
     </div>
   </section>
 
-  <!-- ── Bento Feature Grid ──────────────────────────────────────────────── -->
+  <!-- ── Bento Feature Grid with Scroll Counters ─────────────────────────── -->
   <section id="features" class="features-section" aria-labelledby="features-title">
     <div class="section-wrap">
-      <p class="section-label">Engine Features</p>
-      <h2 class="section-title" id="features-title">Designed for focus &amp; performance</h2>
-      <p class="section-sub">Built with pure Vanilla JS and browser standard APIs.</p>
+      <p class="section-label">Engine Architecture</p>
+      <h2 class="section-title" id="features-title">Built for speed, aesthetics, and privacy</h2>
+      <p class="section-sub">Pure Vanilla JS (ES Modules) with zero external CSS or UI frameworks.</p>
 
-      <div class="feature-grid">
+      <div class="feature-grid reveal-grid">
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="spark" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="spark" aria-hidden="true"></span>
           </div>
-          <h3 class="feature-title">Natural Language Parsing</h3>
+          <div class="feature-stat-num" data-target="100" data-suffix="%">0%</div>
+          <h3 class="feature-title">IntersectionObserver Scroll Reveals</h3>
           <p class="feature-desc">
-            Type <code>Morning run tomorrow @fitness !p1</code> to parse date, tags, and priority flags dynamically into structured tasks.
+            Zero-dependency smooth scroll-driven animations trigger cubic-bezier reveals and staggered delays as cards scroll into view.
           </p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="board" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="board" aria-hidden="true"></span>
           </div>
+          <div class="feature-stat-num" data-target="3" data-suffix=" Views">0 Views</div>
           <h3 class="feature-title">Triple Reactive Views</h3>
           <p class="feature-desc">
             Toggle seamlessly between a status-grouped List, HTML5 native Drag &amp; Drop Kanban Board, and a 7-column Monthly Calendar grid.
           </p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="clock" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="clock" aria-hidden="true"></span>
           </div>
-          <h3 class="feature-title">Zero-Asset Web Audio Timer</h3>
+          <div class="feature-stat-num" data-target="4" data-suffix=" Domains">0 Domains</div>
+          <h3 class="feature-title">Four Isolated Domain Workspaces</h3>
           <p class="feature-desc">
-            Includes a floating Pomodoro dock that synthesizes pure sine-wave chimes via the Web Audio API without external sound files.
+            Fitness, Habits, Deep Work, and Errands each feature custom color accents, metric banners, and isolated task stores.
           </p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="bell" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="bell" aria-hidden="true"></span>
           </div>
           <h3 class="feature-title">Web Notifications API</h3>
           <p class="feature-desc">
@@ -224,9 +263,9 @@
           </p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="lock" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="lock" aria-hidden="true"></span>
           </div>
           <h3 class="feature-title">State Isolation per Account</h3>
           <p class="feature-desc">
@@ -234,11 +273,11 @@
           </p>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card reveal-on-scroll">
           <div class="feature-icon-wrap">
-            <span data-icon="logo" aria-hidden="true"></span>
+            <span class="icon-slot" data-icon="logo" aria-hidden="true"></span>
           </div>
-          <h3 class="feature-title">Zero Emoji Architecture</h3>
+          <h3 class="feature-title">Zero Emoji Mandate</h3>
           <p class="feature-desc">
             Strict editorial aesthetic powered exclusively by clean 16x16 vector SVG icons and high-contrast obsidian typography.
           </p>
@@ -248,28 +287,168 @@
     </div>
   </section>
 
-  <!-- ── Interactive FAQ Accordion Section ───────────────────────────────── -->
+  <!-- ── 3-Pillar Manifesto, 4-7-8 Breathing & Cognitive Drag Audit ────────── -->
+  <section id="philosophy" class="philosophy-section reveal-on-scroll" aria-labelledby="philosophy-title">
+    <div class="section-wrap">
+      <p class="section-label">Architectural Manifesto</p>
+      <h2 class="section-title decrypt-on-hover" id="philosophy-title">Designed for Cognitive Calm</h2>
+      <p class="section-sub">System architecture and UX decisions grounded in radical focus, contextual containment, and frictionless capture.</p>
+
+      <!-- 1. Interactive 3-Pillar Manifesto Grid -->
+      <div class="pillar-grid reveal-grid">
+
+        <!-- Card 01: Radical Subtraction -->
+        <article class="pillar-card reveal-on-scroll" data-pillar="subtraction" data-tint="#c86d51">
+          <div class="pillar-badge">Pillar 01</div>
+          <h3 class="pillar-headline decrypt-on-hover">Eliminating the Tyranny of Urgency</h3>
+          <p class="pillar-concept">
+            Removing red notification badges and gamified streak panic turns task management into a calm horizon.
+            Focus is protected by eliminating artificial urgency triggers.
+          </p>
+          <div class="pillar-footer">
+            <span class="pillar-indicator"></span>
+            <span class="pillar-meta">Micro-Interaction: Aura Terracotta Shift</span>
+          </div>
+        </article>
+
+        <!-- Card 02: Contextual Containment -->
+        <article class="pillar-card reveal-on-scroll" data-pillar="containment" data-tint="#5e6b4e">
+          <div class="pillar-badge">Pillar 02</div>
+          <h3 class="pillar-headline decrypt-on-hover">Hard Boundaries Between Vitality &amp; Work</h3>
+          <p class="pillar-concept">
+            Isolates domain contexts (Fitness, Habits, Deep Work, Errands) into dedicated, isolated state stores
+            rather than dumping everything into a single chaotic list.
+          </p>
+          <div class="pillar-footer">
+            <span class="pillar-indicator"></span>
+            <span class="pillar-meta">Micro-Interaction: Aura Sage Shift</span>
+          </div>
+        </article>
+
+        <!-- Card 03: Frictionless Capture -->
+        <article class="pillar-card reveal-on-scroll" data-pillar="capture" data-tint="#44546a">
+          <div class="pillar-badge">Pillar 03</div>
+          <h3 class="pillar-headline decrypt-on-hover">Natural Language at the Speed of Thought</h3>
+          <p class="pillar-concept">
+            Replaces tedious dropdown modal forms with regex-driven inline tokenization for due dates,
+            tags, and priorities parsed instantly from raw text.
+          </p>
+          <div class="pillar-footer">
+            <span class="pillar-indicator"></span>
+            <span class="pillar-meta">Micro-Interaction: Aura Slate Shift</span>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- 2. Mindful 4-7-8 Breathing Engine Dock -->
+      <div class="breathing-card reveal-on-scroll">
+        <div class="breathing-header">
+          <div>
+            <p class="section-label" style="margin-bottom:2px;">Mindful Pause</p>
+            <h3 class="breathing-title decrypt-on-hover">The 4-7-8 Breathing Engine</h3>
+          </div>
+          <span class="breathing-badge" id="breathing-counter-badge">0 Cycles</span>
+        </div>
+
+        <div class="breathing-dock" id="breathing-dock">
+          <div class="breathing-visual">
+            <div class="breathing-ring-outer"></div>
+            <div class="breathing-ring-inner" id="breathing-ring-inner">
+              <span class="breathing-core-icon icon-slot" data-icon="spark" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="breathing-info">
+            <div class="breathing-status" id="breathing-status-text">Ready for mindful pause</div>
+            <div class="breathing-timer" id="breathing-timer-text">4 &bull; 7 &bull; 8</div>
+            <p class="breathing-sub">
+              Scientific 4-7-8 respiration resets your nervous system before entering a Deep Work Sprint.
+            </p>
+            <button class="btn-primary breathing-cta" id="breathing-start-btn">
+              <span class="icon-slot" data-icon="spark" aria-hidden="true"></span>
+              Start Mindful Pause
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Interactive Cognitive Drag Self-Audit Tool -->
+      <div class="audit-card reveal-on-scroll" id="cognitive-drag-audit">
+        <div class="audit-header">
+          <div>
+            <p class="section-label" style="margin-bottom:2px;">Self Audit</p>
+            <h3 class="audit-title decrypt-on-hover">Calculate Your Cognitive Drag Index</h3>
+          </div>
+          <div class="audit-gauge">
+            <span class="audit-score" id="audit-score-text">0% &ndash; Calm Horizon</span>
+          </div>
+        </div>
+
+        <p class="audit-intro">
+          Select the items below that match your current productivity setup:
+        </p>
+
+        <form class="audit-checklist-form" id="audit-form" onsubmit="event.preventDefault();">
+          <label class="audit-checkbox-item">
+            <input type="checkbox" class="audit-checkbox-input" value="bleed" />
+            <span class="audit-checkbox-custom"></span>
+            <span class="audit-checkbox-label">Do work deadlines frequently bleed into your personal evenings?</span>
+          </label>
+
+          <label class="audit-checkbox-item">
+            <input type="checkbox" class="audit-checkbox-input" value="folders" />
+            <span class="audit-checkbox-custom"></span>
+            <span class="audit-checkbox-label">Do multi-nested folders and dropdown forms paralyze your task capture?</span>
+          </label>
+
+          <label class="audit-checkbox-item">
+            <input type="checkbox" class="audit-checkbox-input" value="colorcode" />
+            <span class="audit-checkbox-custom"></span>
+            <span class="audit-checkbox-label">Do you spend more time color-coding to-do lists than doing actual deep work?</span>
+          </label>
+        </form>
+
+        <div class="audit-recommendation" id="audit-rec-box">
+          <div class="audit-rec-left">
+            <span class="icon-slot" data-icon="brain" aria-hidden="true"></span>
+            <div>
+              <div class="audit-rec-heading" id="audit-rec-title">Recommended System Setup</div>
+              <div class="audit-rec-sub" id="audit-rec-desc">Select questions above to analyze your friction points.</div>
+            </div>
+          </div>
+          <button class="btn-primary audit-rec-btn" id="audit-seed-btn" style="display:none;">
+            Seed Presets &amp; Launch App
+            <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FAQ Accordion Section with Scroll Reveal ────────────────────────── -->
   <section id="faq" class="faq-section" aria-labelledby="faq-title">
     <div class="section-wrap">
       <p class="section-label">FAQ</p>
       <h2 class="section-title" id="faq-title">Frequently asked questions</h2>
       <p class="section-sub">Everything you need to know about Komorebi Workspace.</p>
 
-      <div class="faq-list" role="tablist">
+      <div class="faq-list reveal-grid" role="tablist">
 
-        <div class="faq-item">
+        <div class="faq-item reveal-on-scroll">
           <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-1" id="faq-q-1">
-            <span>Is my task data private and saved locally?</span>
+            <span>How do the 4 Domain Workspaces differ from each other?</span>
             <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
           </button>
           <div id="faq-ans-1" class="faq-content" role="region" aria-labelledby="faq-q-1">
             <div class="faq-body">
-              Yes. All your task data, custom tags, priorities, and workspace states are stored isolated inside your browser's localStorage. No third-party servers ever touch your personal information.
+              Each of the 4 domains (Fitness &amp; Health, Habit Formation, Deep Work Sprint, Grocery &amp; Errands) has its own isolated task store, custom color accent theme (`body.dataset.domain`), quick metrics widget, and dedicated domain action.
             </div>
           </div>
         </div>
 
-        <div class="faq-item">
+        <div class="faq-item reveal-on-scroll">
           <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-2" id="faq-q-2">
             <span>How does the Natural Language Input work?</span>
             <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
@@ -281,7 +460,7 @@
           </div>
         </div>
 
-        <div class="faq-item">
+        <div class="faq-item reveal-on-scroll">
           <button class="faq-trigger" aria-expanded="false" aria-controls="faq-ans-3" id="faq-q-3">
             <span>Does the Pomodoro timer require external audio files?</span>
             <span class="faq-icon icon-slot" data-icon="chevronDown" aria-hidden="true"></span>
@@ -313,7 +492,7 @@
           <h4 class="footer-col-title">Navigation</h4>
           <div class="footer-link-list">
             <a href="#features">Features</a>
-            <a href="#templates">Templates</a>
+            <a href="#templates">Workspaces</a>
             <a href="#faq">FAQ</a>
           </div>
         </div>
@@ -331,8 +510,8 @@
     <div class="footer-watermark" aria-hidden="true">KOMOREBI</div>
 
     <div class="footer-bottom">
-      <span>Komorebi Workspace &copy; 2026. Production-Grade SPA.</span>
-      <span>Vanilla JS (ES Modules) &middot; Web Audio API &middot; Local Storage Scoping</span>
+      <span>Komorebi Workspace &copy; 2026. Production-Grade Themed SPA.</span>
+      <span>Vanilla JS (ES Modules) &middot; IntersectionObserver &middot; Web Audio API</span>
     </div>
   </footer>
 
@@ -350,21 +529,33 @@
     <div class="ws-header-left">
       <!-- Back to Landing Page -->
       <button id="ws-back-btn" class="ws-back-btn" title="Back to main page">
-        <span data-icon="logo" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="logo" aria-hidden="true"></span>
         Komorebi
       </button>
 
       <div class="ws-divider" aria-hidden="true"></div>
 
-      <!-- Segmented Workspace Switcher Tabs -->
-      <nav class="ws-switcher-tabs" aria-label="Workspace Scope">
-        <button class="ws-tab-btn active" data-workspace="personal">
-          <span data-icon="user" aria-hidden="true"></span>
-          Personal Life
+      <!-- 4-Domain Switcher Ribbon (Fitness, Habits, Deep Work, Errands) -->
+      <nav class="ws-domain-ribbon" aria-label="Domain Switcher">
+        <button class="ws-domain-btn active" data-domain="fitness">
+          <span class="icon-slot" data-icon="fitness" aria-hidden="true"></span>
+          Fitness &amp; Health
+          <span class="domain-count-badge" id="badge-fitness">0</span>
         </button>
-        <button class="ws-tab-btn" data-workspace="work">
-          <span data-icon="brain" aria-hidden="true"></span>
-          Deep Work
+        <button class="ws-domain-btn" data-domain="habits">
+          <span class="icon-slot" data-icon="target" aria-hidden="true"></span>
+          Habit Formation
+          <span class="domain-count-badge" id="badge-habits">0</span>
+        </button>
+        <button class="ws-domain-btn" data-domain="deepwork">
+          <span class="icon-slot" data-icon="brain" aria-hidden="true"></span>
+          Deep Work Sprint
+          <span class="domain-count-badge" id="badge-deepwork">0</span>
+        </button>
+        <button class="ws-domain-btn" data-domain="errands">
+          <span class="icon-slot" data-icon="shopping" aria-hidden="true"></span>
+          Grocery &amp; Errands
+          <span class="domain-count-badge" id="badge-errands">0</span>
         </button>
       </nav>
     </div>
@@ -385,15 +576,15 @@
       <!-- Triple View Mode Toggles -->
       <div class="view-toggle-group" role="group" aria-label="View Modes">
         <button class="view-toggle-btn active" data-view="list">
-          <span data-icon="list" aria-hidden="true"></span>
+          <span class="icon-slot" data-icon="list" aria-hidden="true"></span>
           List
         </button>
         <button class="view-toggle-btn" data-view="board">
-          <span data-icon="board" aria-hidden="true"></span>
+          <span class="icon-slot" data-icon="board" aria-hidden="true"></span>
           Board
         </button>
         <button class="view-toggle-btn" data-view="calendar">
-          <span data-icon="calendar" aria-hidden="true"></span>
+          <span class="icon-slot" data-icon="calendar" aria-hidden="true"></span>
           Calendar
         </button>
       </div>
@@ -403,13 +594,13 @@
         <div class="profile-avatar" id="user-avatar-initial">G</div>
         <span id="user-display-name">Guest</span>
         <button class="sign-out-btn" id="sign-out-btn" title="Sign Out">
-          <span data-icon="close" aria-hidden="true"></span>
+          <span class="icon-slot" data-icon="close" aria-hidden="true"></span>
         </button>
       </div>
 
       <!-- "+ New Task" Trigger -->
       <button id="open-task-dialog-btn" class="btn-primary">
-        <span data-icon="plus" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="plus" aria-hidden="true"></span>
         New Task
       </button>
 
@@ -419,11 +610,24 @@
   <!-- ── Main Workspace Body Container ───────────────────────────────────── -->
   <div class="ws-body">
 
-    <!-- Workspace Title Row -->
-    <div class="ws-title-row">
-      <div>
-        <h1 class="ws-title" id="ws-title">Personal Life</h1>
-        <p class="ws-subtitle" id="ws-subtitle">Organize habits, fitness, and daily errands.</p>
+    <!-- Active Domain Banner Widget (#domain-banner) -->
+    <div class="domain-banner" id="domain-banner">
+      <div class="domain-banner-left">
+        <h1 class="domain-banner-title" id="domain-title">
+          <span class="icon-slot" id="domain-icon" data-icon="fitness"></span>
+          <span id="domain-name">Fitness &amp; Health</span>
+        </h1>
+        <p class="domain-banner-sub" id="domain-desc">Track active movement, hydration, and stretching goals.</p>
+      </div>
+      <div class="domain-banner-right">
+        <div class="domain-metric-widget" id="domain-metric-widget">
+          <span class="icon-slot" data-icon="flame"></span>
+          <span id="domain-metric-text">Movement Goal: 0/0 Done</span>
+        </div>
+        <button class="domain-action-btn" id="domain-quick-action-btn">
+          <span class="icon-slot" data-icon="zap"></span>
+          <span id="domain-action-label">Quick Log</span>
+        </button>
       </div>
     </div>
 
@@ -434,12 +638,12 @@
         type="text"
         id="nlp-input"
         class="nlp-input"
-        placeholder="Add task... e.g. Morning run tomorrow @fitness !p1"
+        placeholder="Add task... e.g. Morning 20-min workout &amp; stretch tomorrow @fitness !p1"
         aria-label="Add task with natural language parsing"
       />
       <span class="nlp-hint" aria-hidden="true">today &middot; tomorrow &middot; @tag &middot; !p1</span>
       <button type="submit" class="nlp-submit-btn">
-        <span data-icon="plus" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="plus" aria-hidden="true"></span>
         Add
       </button>
     </form>
@@ -460,13 +664,13 @@
     </div>
     <div class="pomo-controls">
       <button class="pomo-btn" id="pomo-play-btn" title="Start Focus Session" aria-label="Start timer">
-        <span data-icon="play" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="play" aria-hidden="true"></span>
       </button>
       <button class="pomo-btn" id="pomo-pause-btn" title="Pause Timer" aria-label="Pause timer" style="display:none;">
-        <span data-icon="pause" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="pause" aria-hidden="true"></span>
       </button>
       <button class="pomo-btn" id="pomo-reset-btn" title="Reset Session" aria-label="Reset timer">
-        <span data-icon="rotate" aria-hidden="true"></span>
+        <span class="icon-slot" data-icon="rotate" aria-hidden="true"></span>
       </button>
     </div>
   </aside>
@@ -540,7 +744,7 @@
       <input
         type="text"
         id="task-title-input"
-        placeholder="e.g. Architect Komorebi SPA engine"
+        placeholder="e.g. Morning 20-min workout & stretch"
         required
         autocomplete="off"
       />
