@@ -32,6 +32,15 @@ function getDefaultTasks() {
 class StateManager {
   constructor() {
     this._listeners = [];
+    this.currentView = 'list';
+    this.reloadForUser();
+  }
+
+  /**
+   * Synchronizes state for current user and explicitly resets currentView to 'list'.
+   */
+  syncUser() {
+    this.currentView = 'list';
     this.reloadForUser();
   }
 
@@ -53,7 +62,7 @@ class StateManager {
     });
 
     this.activeDomain = storage.getDomain(userId);
-    this.currentView   = storage.getView(userId);
+    this.currentView  = 'list';
 
     // Apply dynamic body data-domain attribute for CSS theme switching
     document.body.dataset.domain = this.activeDomain;

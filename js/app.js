@@ -167,6 +167,22 @@ function animateCounter(el, targetNum, suffix = '') {
 }
 
 /* ── Native View Transitions SPA Router ──────────────────────────────────── */
+export function switchSurface(surface) {
+  const surfaceId = (surface === 'app' || surface === 'app-surface') ? 'app-surface' : 'landing-surface';
+
+  if (surfaceId === 'app-surface') {
+    state.currentView = 'list';
+    if (typeof state.syncUser === 'function') {
+      state.syncUser();
+    } else {
+      state.reloadForUser();
+    }
+  }
+
+  showSurface(surfaceId);
+  syncLandingHeaderAuth();
+}
+
 function showSurface(surfaceId) {
   const landing = $('landing-surface');
   const app = $('app-surface');
@@ -192,14 +208,57 @@ function showSurface(surfaceId) {
 }
 
 /* ── User Session & Profile UI Synchronization ────────────────────────────── */
+export function syncLandingHeaderAuth() {
+  const user = typeof auth.getCurrentUser === 'function' ? auth.getCurrentUser() : auth.currentUser;
+  const guestState = $('landing-nav-guest');
+  const userCapsule = $('landing-nav-user');
+  const avatarEl = $('landing-user-avatar');
+  const nameEl = $('landing-user-name');
+
+  if (user && guestState && userCapsule) {
+    guestState.style.display = 'none';
+    userCapsule.style.display = 'flex';
+
+    let initials = user.initials;
+    if (!initials) {
+      if (user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        initials = parts.length >= 2
+          ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+          : user.name.slice(0, 2).toUpperCase();
+      } else {
+        initials = 'U';
+      }
+    }
+
+    if (avatarEl) avatarEl.textContent = initials;
+    if (nameEl) nameEl.textContent = user.name || 'User';
+  } else if (guestState && userCapsule) {
+    userCapsule.style.display = 'none';
+    guestState.style.display = 'flex';
+    if (avatarEl) avatarEl.textContent = '';
+    if (nameEl) nameEl.textContent = '';
+  }
+}
+
 function updateProfileUI() {
-  const user = auth.currentUser;
+  const user = typeof auth.getCurrentUser === 'function' ? auth.getCurrentUser() : auth.currentUser;
   const avatarEl = $('user-avatar-initial');
   const nameEl   = $('user-display-name');
 
   if (user) {
-    const initial = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-    if (avatarEl) avatarEl.textContent = initial;
+    let initials = user.initials;
+    if (!initials) {
+      if (user.name) {
+        const parts = user.name.trim().split(/\s+/);
+        initials = parts.length >= 2
+          ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+          : user.name.slice(0, 2).toUpperCase();
+      } else {
+        initials = 'U';
+      }
+    }
+    if (avatarEl) avatarEl.textContent = initials;
     if (nameEl)   nameEl.textContent   = user.name || 'User';
   } else {
     if (avatarEl) avatarEl.textContent = 'G';
@@ -560,8 +619,9 @@ function initAuthModal() {
       try {
         auth.login({ email, password: pass });
         modal.close();
-        state.reloadForUser();
-        showSurface('app-surface');
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
+        switchSurface('app');
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.add('visible');
@@ -579,8 +639,9 @@ function initAuthModal() {
       try {
         auth.register({ name, email, password: pass });
         modal.close();
-        state.reloadForUser();
-        showSurface('app-surface');
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
+        switchSurface('app');
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.classList.add('visible');
@@ -592,8 +653,9 @@ function initAuthModal() {
     demoBtn.addEventListener('click', () => {
       auth.startDemo();
       modal.close();
-      state.reloadForUser();
-      showSurface('app-surface');
+      if (typeof state.syncUser === 'function') state.syncUser();
+      else state.reloadForUser();
+      switchSurface('app');
     });
   }
 }
@@ -645,9 +707,10 @@ function initLanding() {
     btn.addEventListener('click', () => {
       if (!auth.isAuthenticated) {
         auth.startDemo();
-        state.reloadForUser();
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
       }
-      showSurface('app-surface');
+      switchSurface('app');
     });
   });
 
@@ -659,16 +722,36 @@ function initLanding() {
 
       if (!auth.isAuthenticated) {
         auth.startDemo();
-        state.reloadForUser();
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
       }
 
       const today = todayISO();
       const seededTasks = tpl.tasks.map(t => ({ ...t, dueDate: today }));
 
       state.seedTemplate(tpl.domain, seededTasks);
-      showSurface('app-surface');
+      switchSurface('app');
     });
   });
+
+  const landingOpenWsBtn = $('landing-open-ws-btn');
+  if (landingOpenWsBtn) {
+    landingOpenWsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchSurface('app');
+    });
+  }
+
+  const landingSignOutBtn = $('landing-signout-btn');
+  if (landingSignOutBtn) {
+    landingSignOutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      auth.logout();
+      if (typeof state.syncUser === 'function') state.syncUser();
+      else state.reloadForUser();
+      syncLandingHeaderAuth();
+    });
+  }
 }
 
 /* ── 3-Pillar Manifesto Hover Canvas Aura Shift ───────────────────────────── */
@@ -731,7 +814,8 @@ function initCognitiveDragAudit() {
   seedBtn.addEventListener('click', () => {
     if (!auth.isAuthenticated) {
       auth.startDemo();
-      state.reloadForUser();
+      if (typeof state.syncUser === 'function') state.syncUser();
+      else state.reloadForUser();
     }
 
     const domain = seedBtn.dataset.targetDomain || 'deepwork';
@@ -740,7 +824,7 @@ function initCognitiveDragAudit() {
     const seeded = tpl.tasks.map(t => ({ ...t, dueDate: today }));
 
     state.seedTemplate(domain, seeded);
-    showSurface('app-surface');
+    switchSurface('app');
   });
 
   updateAudit();
@@ -800,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 11. Bind "Back to main page" button
   const backBtn = $('ws-back-btn');
   if (backBtn) {
-    backBtn.addEventListener('click', () => showSurface('landing-surface'));
+    backBtn.addEventListener('click', () => switchSurface('landing'));
   }
 
   // 12. Bind Sign Out button
@@ -808,8 +892,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (signOutBtn) {
     signOutBtn.addEventListener('click', () => {
       auth.logout();
-      state.reloadForUser();
-      showSurface('landing-surface');
+      if (typeof state.syncUser === 'function') state.syncUser();
+      else state.reloadForUser();
+      switchSurface('landing');
     });
   }
 
@@ -826,7 +911,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCognitiveDragAudit();
 
   // 14. Initial Surface Routing — Always land on Home Page on reload
-  showSurface('landing-surface');
+  switchSurface('landing');
 });
 
 function esc(s) {

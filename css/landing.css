@@ -207,6 +207,85 @@
   gap: 12px;
 }
 
+.nav-guest-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Authenticated Profile Capsule for Landing Navbar ────────────────────── */
+.nav-user-capsule {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  padding: 5px 12px 5px 6px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.nav-user-capsule:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.capsule-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.capsule-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--text-main);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.capsule-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.capsule-ws-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.capsule-signout-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.capsule-signout-btn:hover {
+  color: #c86d51;
+  background: rgba(200, 109, 81, 0.08);
+}
+
 /* ── Hero Section ────────────────────────────────────────────────────────── */
 .hero-section {
   position: relative;

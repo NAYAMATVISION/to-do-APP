@@ -10,6 +10,10 @@ class AuthManager {
     return this.session ? this.session.user : null;
   }
 
+  getCurrentUser() {
+    return this.currentUser;
+  }
+
   get isAuthenticated() {
     return !!this.session;
   }
@@ -101,11 +105,17 @@ class AuthManager {
   }
 
   _setSession(user, isDemo = false) {
+    const nameParts = user.name ? user.name.trim().split(/\s+/) : [];
+    const initials = nameParts.length >= 2
+      ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+      : (user.name ? user.name.slice(0, 2).toUpperCase() : 'U');
+
     this.session = {
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
+        initials,
       },
       isDemo,
       token: `token-${Date.now()}`,

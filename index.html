@@ -50,12 +50,29 @@
       <a href="#faq" class="nav-link" role="listitem">FAQ</a>
     </div>
 
-    <div class="nav-cta">
-      <button class="btn-secondary" id="nav-signin-btn">Sign In</button>
-      <button class="btn-primary" data-action="open-demo">
-        Launch App
-        <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
-      </button>
+    <div class="nav-cta" id="landing-nav-cta">
+      <!-- Unauthenticated Guest State -->
+      <div id="landing-nav-guest" class="nav-guest-state">
+        <button class="btn-secondary" id="nav-signin-btn">Sign In</button>
+        <button class="btn-primary" id="nav-launch-btn" data-action="open-demo">
+          Launch Workspace
+          <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <!-- Authenticated Profile Capsule (Hidden when logged out) -->
+      <div id="landing-nav-user" class="nav-user-capsule" style="display: none;">
+        <div class="capsule-profile">
+          <div class="capsule-avatar" id="landing-user-avatar"></div>
+          <span class="capsule-name" id="landing-user-name"></span>
+        </div>
+        <button class="btn-primary capsule-ws-btn" id="landing-open-ws-btn">
+          Open Workspace &rarr;
+        </button>
+        <button class="capsule-signout-btn" id="landing-signout-btn">
+          Sign Out
+        </button>
+      </div>
     </div>
   </nav>
 
