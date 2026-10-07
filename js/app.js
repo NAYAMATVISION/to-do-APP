@@ -10,6 +10,7 @@ import { initAuraCanvas, startAura, setAuraTint, resetAuraTint } from './utils/a
 import { decryptText, bindHoverDecrypt, initKineticWordCycler } from './utils/textEffects.js';
 import { initTiltPhysics }     from './utils/tiltPhysics.js';
 import { initBreathingEngine } from './utils/breathingEngine.js';
+import { initPhilosophySection } from './utils/philosophyLens.js';
 
 /* ── Preset Template Definitions per Domain ──────────────────────────────── */
 const TEMPLATES = {
@@ -909,6 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPillarMicroInteractions();
   initBreathingEngine();
   initCognitiveDragAudit();
+  initPhilosophySection();
 
   // 14. Initial Surface Routing — Always land on Home Page on reload
   switchSurface('landing');

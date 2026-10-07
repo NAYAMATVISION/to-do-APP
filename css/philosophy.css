@@ -1,0 +1,492 @@
+/* ==========================================================================
+   css/philosophy.css — Interactive Editorial Philosophy & Lens Architecture
+   Komorebi Workspace — Pure Vanilla CSS3
+   ========================================================================== */
+
+/* ── Section Base Container ──────────────────────────────────────────────── */
+.philosophy-section {
+  position: relative;
+  z-index: 2;
+  padding: 96px 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ── 1. Interactive "Noise vs. Clarity" Split-Screen Lens ─────────────────── */
+.philosophy-lens-wrapper {
+  margin: 40px 0 32px 0;
+  position: relative;
+}
+
+#philosophy-lens {
+  --split-percent: 50%;
+  position: relative;
+  width: 100%;
+  height: 520px;
+  min-height: 480px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  background: var(--bg-app);
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* ── Lens Layer Base Styles ──────────────────────────────────────────────── */
+.lens-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* ── Right Layer: The Komorebi State (Calm Horizon) ───────────────────────── */
+.lens-layer.lens-clarity {
+  z-index: 1;
+  background: #faf8f5;
+  color: var(--text-main);
+}
+
+.lens-clarity .lens-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(25, 24, 23, 0.08);
+}
+
+.lens-clarity .lens-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lens-clarity .lens-badge-calm {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(94, 107, 78, 0.12);
+  color: #5e6b4e;
+  border: 1px solid rgba(94, 107, 78, 0.25);
+  text-transform: uppercase;
+}
+
+.lens-clarity .lens-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.lens-clarity .lens-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 4px 0 0 0;
+}
+
+/* Komorebi Editorial Task List */
+.lens-clarity .lens-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.lens-clarity .lens-task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition-fast);
+}
+
+.lens-clarity .lens-task-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lens-clarity .lens-task-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+}
+
+.lens-clarity .lens-task-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.lens-clarity .lens-task-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lens-clarity .lens-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+
+.lens-clarity .lens-pill.p1 {
+  background: rgba(200, 109, 81, 0.12);
+  color: #c86d51;
+}
+
+.lens-clarity .lens-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(25, 24, 23, 0.08);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+/* ── Left Layer: The Noise (Chaotic Software) ─────────────────────────────── */
+.lens-layer.lens-noise {
+  z-index: 2;
+  background: #181514;
+  color: #f3f4f6;
+  clip-path: inset(0 calc(100% - var(--split-percent, 50%)) 0 0);
+  will-change: clip-path;
+}
+
+.lens-noise .lens-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lens-noise .lens-badge-noise {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  text-transform: uppercase;
+  animation: pulseNoiseBadge 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseNoiseBadge {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(0.97); }
+}
+
+.lens-noise .lens-title {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.lens-noise .lens-sub {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 4px 0 0 0;
+}
+
+/* Chaotic Cluttered Task List */
+.lens-noise .lens-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.lens-noise .lens-noise-alert {
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-sm);
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lens-noise .lens-noise-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #262322;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-sm);
+  position: relative;
+}
+
+.lens-noise .noise-badge-red {
+  background: #dc2626;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.lens-noise .noise-input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.lens-noise .noise-select {
+  background: #374151;
+  border: 1px solid #4b5563;
+  color: #d1d5db;
+  font-size: 11px;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+.lens-noise .lens-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* ── Interactive Drag Divider Handle ──────────────────────────────────────── */
+#lens-drag-handle {
+  --split-percent: 50%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split-percent, 50%);
+  width: 3px;
+  background: var(--text-main);
+  z-index: 10;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  touch-action: none;
+  transition: background var(--transition-fast);
+}
+
+#philosophy-lens.is-dragging #lens-drag-handle,
+#lens-drag-handle:hover {
+  background: #c86d51;
+}
+
+.lens-handle-grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--text-main);
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth);
+}
+
+#philosophy-lens.is-dragging .lens-handle-grip,
+#lens-drag-handle:hover .lens-handle-grip {
+  transform: translate(-50%, -50%) scale(1.12);
+  background: #c86d51;
+}
+
+.lens-handle-grip svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
+/* Bottom Hint Pill floating under lens */
+.lens-instruction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── 2. Mindful Audio Ambience Focus Soundscape Widget ───────────────────── */
+.audio-ambience-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  margin: 32px 0 48px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.audio-ambience-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.audio-ambience-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--domain-bg-tint);
+  border: 1px solid var(--domain-border-tint);
+  color: var(--domain-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.audio-ambience-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 2px 0;
+}
+
+.audio-ambience-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.audio-ambience-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.audio-visualizer-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 20px;
+}
+
+.audio-visualizer-wave .wave-bar {
+  width: 3px;
+  height: 6px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  transition: height 0.2s ease, background 0.2s ease;
+}
+
+.audio-visualizer-wave.is-playing .wave-bar {
+  background: var(--domain-accent);
+  animation: audioWavePulse 1.2s infinite ease-in-out alternate;
+}
+
+.audio-visualizer-wave.is-playing .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+.audio-visualizer-wave.is-playing .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+.audio-visualizer-wave.is-playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.audio-visualizer-wave.is-playing .wave-bar:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes audioWavePulse {
+  0% { height: 4px; }
+  100% { height: 18px; }
+}
+
+.btn-stillness-audio {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  background: var(--text-main);
+  color: var(--bg-app);
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-stillness-audio:hover {
+  background: #c86d51;
+  transform: translateY(-2px);
+}
+
+.btn-stillness-audio.is-active {
+  background: #c86d51;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  #philosophy-lens {
+    height: 480px;
+  }
+
+  .lens-layer {
+    padding: 20px 24px;
+  }
+
+  .lens-clarity .lens-task-card,
+  .lens-noise .lens-noise-card {
+    padding: 10px 14px;
+  }
+
+  .audio-ambience-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .audio-ambience-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

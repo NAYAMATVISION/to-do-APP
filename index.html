@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/landing.css" />
+  <link rel="stylesheet" href="css/philosophy.css" />
   <link rel="stylesheet" href="css/workspace.css" />
 </head>
 <body data-domain="fitness">
@@ -304,14 +305,45 @@
     </div>
   </section>
 
-  <!-- ── 3-Pillar Manifesto, 4-7-8 Breathing & Cognitive Drag Audit ────────── -->
+  <!-- ── 3-Pillar Manifesto, Split Lens & Cognitive Drag Audit ────────────── -->
   <section id="philosophy" class="philosophy-section reveal-on-scroll" aria-labelledby="philosophy-title">
     <div class="section-wrap">
       <p class="section-label">Architectural Manifesto</p>
       <h2 class="section-title decrypt-on-hover" id="philosophy-title">Designed for Cognitive Calm</h2>
       <p class="section-sub">System architecture and UX decisions grounded in radical focus, contextual containment, and frictionless capture.</p>
 
-      <!-- 1. Interactive 3-Pillar Manifesto Grid -->
+
+
+      <!-- 2. Mindful Audio Ambience Focus Soundscape Widget -->
+      <div class="audio-ambience-card reveal-on-scroll">
+        <div class="audio-ambience-info">
+          <div class="audio-ambience-icon-wrap">
+            <span class="icon-slot" data-icon="clock" aria-hidden="true"></span>
+          </div>
+          <div>
+            <h3 class="audio-ambience-title">Listen to Stillness</h3>
+            <p class="audio-ambience-sub" id="stillness-audio-status">
+              Native Brown/Pink Noise Focus Soundscape (Low-pass 320Hz synthesizer)
+            </p>
+          </div>
+        </div>
+
+        <div class="audio-ambience-controls">
+          <div class="audio-visualizer-wave" id="stillness-audio-visual" aria-hidden="true">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </div>
+
+          <button class="btn-stillness-audio" id="listen-stillness-btn">
+            <span class="icon-slot" data-icon="play" aria-hidden="true"></span>
+            <span id="stillness-audio-label">Listen to Stillness</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Interactive 3-Pillar Manifesto Grid -->
       <div class="pillar-grid reveal-grid">
 
         <!-- Card 01: Radical Subtraction -->
@@ -319,8 +351,7 @@
           <div class="pillar-badge">Pillar 01</div>
           <h3 class="pillar-headline decrypt-on-hover">Eliminating the Tyranny of Urgency</h3>
           <p class="pillar-concept">
-            Removing red notification badges and gamified streak panic turns task management into a calm horizon.
-            Focus is protected by eliminating artificial urgency triggers.
+            Removing red notification badges, artificial countdowns, and gamified streak panic turns task management into a calm horizon. Focus is protected by eliminating artificial urgency triggers.
           </p>
           <div class="pillar-footer">
             <span class="pillar-indicator"></span>
@@ -328,13 +359,12 @@
           </div>
         </article>
 
-        <!-- Card 02: Contextual Containment -->
+        <!-- Card 02: Contextual Isolation -->
         <article class="pillar-card reveal-on-scroll" data-pillar="containment" data-tint="#5e6b4e">
           <div class="pillar-badge">Pillar 02</div>
           <h3 class="pillar-headline decrypt-on-hover">Hard Boundaries Between Vitality &amp; Work</h3>
           <p class="pillar-concept">
-            Isolates domain contexts (Fitness, Habits, Deep Work, Errands) into dedicated, isolated state stores
-            rather than dumping everything into a single chaotic list.
+            Preserving strict separation between physical vitality, daily habits, deep work sprints, and errands into dedicated state stores to eliminate cognitive task bleed.
           </p>
           <div class="pillar-footer">
             <span class="pillar-indicator"></span>
@@ -347,8 +377,7 @@
           <div class="pillar-badge">Pillar 03</div>
           <h3 class="pillar-headline decrypt-on-hover">Natural Language at the Speed of Thought</h3>
           <p class="pillar-concept">
-            Replaces tedious dropdown modal forms with regex-driven inline tokenization for due dates,
-            tags, and priorities parsed instantly from raw text.
+            Prioritizing instant inline NLP parsing over multi-field dropdown forms so ideas are recorded instantly with priority, due date, and domain tags before focus breaks.
           </p>
           <div class="pillar-footer">
             <span class="pillar-indicator"></span>
@@ -358,7 +387,7 @@
 
       </div>
 
-      <!-- 2. Mindful 4-7-8 Breathing Engine Dock -->
+      <!-- 4. Mindful 4-7-8 Breathing Engine Dock -->
       <div class="breathing-card reveal-on-scroll">
         <div class="breathing-header">
           <div>
@@ -390,12 +419,12 @@
         </div>
       </div>
 
-      <!-- 3. Interactive Cognitive Drag Self-Audit Tool -->
+      <!-- 5. Interactive Cognitive Drag Self-Audit Tool -->
       <div class="audit-card reveal-on-scroll" id="cognitive-drag-audit">
         <div class="audit-header">
           <div>
             <p class="section-label" style="margin-bottom:2px;">Self Audit</p>
-            <h3 class="audit-title decrypt-on-hover">Calculate Your Cognitive Drag Index</h3>
+            <h3 class="audit-title decrypt-on-hover">Calculate Your Cognitive Friction Index</h3>
           </div>
           <div class="audit-gauge">
             <span class="audit-score" id="audit-score-text">0% &ndash; Calm Horizon</span>
@@ -403,7 +432,7 @@
         </div>
 
         <p class="audit-intro">
-          Select the items below that match your current productivity setup:
+          Diagnose your current workflow friction by selecting the items below:
         </p>
 
         <form class="audit-checklist-form" id="audit-form" onsubmit="event.preventDefault();">
@@ -435,7 +464,7 @@
             </div>
           </div>
           <button class="btn-primary audit-rec-btn" id="audit-seed-btn" style="display:none;">
-            Seed Presets &amp; Launch App
+            Apply Calm Presets
             <span class="icon-slot" data-icon="arrowRight" aria-hidden="true"></span>
           </button>
         </div>
