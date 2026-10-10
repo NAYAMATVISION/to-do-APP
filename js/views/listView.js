@@ -8,6 +8,7 @@ const GROUPS = [
 ];
 
 const DOMAIN_EMPTY_MAP = {
+  inbox:    { title: 'No tasks in Inbox',          desc: 'Capture ideas, study topics, or tasks with natural language quick add.', icon: 'inbox' },
   fitness:  { title: 'No fitness goals added yet', desc: 'Add water tracking, workout routines, or stretching goals to stay active.', icon: 'fitness' },
   habits:   { title: 'No daily habits logged',     desc: 'Build consistency by adding reading, journaling, or mindfulness habits.', icon: 'target' },
   deepwork: { title: 'No deep work sprints active', desc: 'Lock in focus by starting a 2-hour sprint or adding technical tasks.', icon: 'brain' },
@@ -79,8 +80,11 @@ function _taskRow(t) {
       </div>
       <div class="task-right">
         <span class="task-date-pill">${dateBadge}</span>
+        <button class="edit-task-btn" data-id="${t.id}" aria-label="Edit task" title="Edit task" style="background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;padding:2px 4px;border-radius:4px;">
+          ${icons.edit}
+        </button>
         <button class="delete-task-btn" aria-label="Delete task" title="Delete task">
-          ${icons.close}
+          ${icons.trash || icons.close}
         </button>
       </div>
     </li>`;

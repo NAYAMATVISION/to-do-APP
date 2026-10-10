@@ -92,3 +92,12 @@ body[data-domain="errands"] {
   --domain-bg-tint:     #faf6f0;
   --domain-border-tint: rgba(181, 122, 43, 0.25);
 }
+
+/* ── Domain 5: Inbox (Todoist Clean Coral Theme) ────────────────────────── */
+body[data-domain="inbox"] {
+  --domain-accent:      #dc4c3e;
+  --domain-accent-dark: #c53727;
+  --domain-bg-tint:     #fcf6f5;
+  --domain-border-tint: rgba(220, 76, 62, 0.22);
+}
+

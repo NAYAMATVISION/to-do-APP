@@ -1011,3 +1011,1061 @@
     justify-content: space-between;
   }
 }
+
+/* ==========================================================================
+   Todoist Horizontal Sectioned Kanban Board (Source Image Faithful Layout)
+   ========================================================================== */
+.ws-body:has(.todoist-board-wrap) {
+  max-width: 100%;
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+.todoist-board-wrap {
+  width: 100%;
+  overflow: hidden;
+}
+
+.todoist-board-canvas {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 24px;
+  min-height: 520px;
+  width: 100%;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sleek Horizontal Scrollbar */
+.todoist-board-canvas::-webkit-scrollbar {
+  height: 8px;
+}
+.todoist-board-canvas::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+}
+.todoist-board-canvas::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+}
+.todoist-board-canvas::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.todoist-board-column {
+  flex: 0 0 280px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todoist-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px 8px;
+  border-bottom: 1px solid transparent;
+}
+
+.todoist-column-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.todoist-column-title {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.todoist-column-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: #888888;
+}
+
+.todoist-column-menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.todoist-column-menu-btn:hover {
+  color: #1f2937;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.todoist-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+  border-radius: 10px;
+  padding: 3px;
+  transition: background 0.15s, outline 0.15s;
+}
+
+.todoist-card-stack.drag-over {
+  background: rgba(220, 76, 62, 0.04);
+  outline: 1.5px dashed var(--domain-accent);
+  outline-offset: -2px;
+}
+
+.todoist-empty-state {
+  padding: 16px 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+}
+
+/* Individual Task Cards matching reference image */
+.todoist-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 11px 13px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  cursor: grab;
+  transition: transform 0.12s var(--ease-smooth), box-shadow 0.12s var(--ease-smooth), border-color 0.12s;
+  user-select: none;
+}
+.todoist-card:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+  border-color: #d1d5db;
+}
+.todoist-card:hover .delete-task-icon {
+  opacity: 1;
+}
+.todoist-card:active {
+  cursor: grabbing;
+}
+.todoist-card.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.98);
+}
+
+.todoist-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Checkbox Button */
+.todoist-check-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #9ca3af;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 0;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.todoist-check-circle:hover {
+  border-color: #4b5563;
+  background: rgba(0, 0, 0, 0.03);
+}
+.todoist-check-circle .check-mark {
+  width: 10px;
+  height: 10px;
+  stroke: #ffffff;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.todoist-check-circle.checked {
+  background: #808080;
+  border-color: #808080;
+}
+.todoist-check-circle.checked .check-mark {
+  opacity: 1;
+}
+
+.todoist-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.todoist-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.todoist-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.todoist-card.is-completed .todoist-card-title {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.delete-task-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.delete-task-icon:hover {
+  color: #ef4444;
+}
+
+/* Meta Pill Chips */
+.todoist-card-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.todoist-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+.todoist-meta-pill .meta-icon {
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.todoist-meta-pill .meta-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Date Pills matching Reference Image colors */
+.date-pill.date-orange {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+}
+.date-pill.date-purple {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+.date-pill.date-grey {
+  color: #6b7280;
+  background: rgba(107, 114, 128, 0.08);
+}
+
+/* Subtask Badge */
+.subtask-pill {
+  color: #6b7280;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+.subtask-pill:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #111827;
+}
+.subtask-pill .chevron-indicator {
+  font-size: 10px;
+  margin-left: 1px;
+}
+
+/* Comments Chip */
+.comment-pill {
+  color: #6b7280;
+  background: transparent;
+  padding: 2px 4px;
+}
+
+/* Nested Subtasks Tree */
+.todoist-subtasks-tree {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 2px;
+}
+
+.todoist-subtask-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  transition: background 0.12s;
+}
+.todoist-subtask-row:hover {
+  background: #f3f4f6;
+}
+.todoist-subtask-title {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 400;
+  line-height: 1.35;
+  flex: 1;
+  word-break: break-word;
+}
+.todoist-subtask-row.is-completed .todoist-subtask-title {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+.subtask-comment {
+  margin-left: auto;
+}
+
+/* Column Footer & "+ Add task" */
+.todoist-column-footer {
+  margin-top: 2px;
+}
+
+.todoist-add-task-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+  text-align: left;
+}
+.todoist-add-task-trigger:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--domain-accent);
+}
+.todoist-plus-sym {
+  color: var(--domain-accent);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Inline Task Composer inside Column */
+.todoist-inline-composer {
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeInDown 0.15s ease-out;
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.composer-title-input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  width: 100%;
+  padding: 2px 0;
+}
+.composer-title-input::placeholder {
+  color: var(--text-light);
+}
+
+.composer-date-input {
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  outline: none;
+  width: 100%;
+}
+.composer-date-input:focus {
+  border-color: var(--domain-accent);
+}
+
+.composer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 2px;
+}
+.composer-submit-btn {
+  background: var(--domain-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.composer-submit-btn:hover {
+  opacity: 0.9;
+}
+.composer-cancel-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.composer-cancel-btn:hover {
+  color: var(--text-main);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Add Section Column at end of board */
+.todoist-add-section-slot {
+  flex: 0 0 280px;
+  width: 280px;
+  min-width: 280px;
+  padding: 4px 0;
+}
+
+.todoist-add-section-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1.5px dashed var(--border-subtle);
+  border-radius: 10px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 16px;
+  width: 100%;
+  transition: all 0.15s;
+}
+.todoist-add-section-btn:hover {
+  border-color: var(--domain-accent);
+  color: var(--domain-accent);
+  background: var(--domain-bg-tint);
+}
+
+.todoist-section-composer {
+  background: #ffffff;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: var(--shadow-sm);
+  animation: fadeInDown 0.15s ease-out;
+}
+.todoist-section-input {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  color: var(--text-main);
+}
+.todoist-section-input:focus {
+  border-color: var(--domain-accent);
+}
+.todoist-section-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.btn-primary-sm {
+  background: var(--domain-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-subtle-sm {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Card & Subtask Hover Actions */
+.todoist-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  margin-left: auto;
+}
+.todoist-card:hover .todoist-card-actions {
+  opacity: 1;
+}
+.edit-task-icon,
+.delete-task-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.edit-task-icon:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+.delete-task-icon:hover {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+.edit-task-icon svg,
+.delete-task-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Section 3-dots Dropdown */
+.todoist-column-actions {
+  position: relative;
+}
+.todoist-column-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  z-index: 100;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: fadeInDown 0.12s ease-out;
+}
+.todoist-column-dropdown .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  width: 100%;
+}
+.todoist-column-dropdown .dropdown-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.todoist-column-dropdown .dropdown-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+.todoist-column-dropdown .dropdown-item.text-danger {
+  color: #dc2626;
+}
+.todoist-column-dropdown .dropdown-item.text-danger:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.todoist-column-dropdown .dropdown-divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 3px 0;
+}
+
+/* Inline Rename Inputs */
+.inline-rename-input {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: #1f2937;
+  padding: 2px 6px;
+  border: 1.5px solid var(--domain-accent, #c86d51);
+  border-radius: 4px;
+  outline: none;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(200, 109, 81, 0.15);
+  width: 100%;
+}
+
+/* Subtask Row Actions */
+.subtask-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.todoist-subtask-row:hover .subtask-row-actions {
+  opacity: 1;
+}
+.edit-subtask-btn,
+.delete-subtask-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  width: 18px;
+  height: 18px;
+  padding: 2px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+}
+.edit-subtask-btn:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+.delete-subtask-btn:hover {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.08);
+}
+.edit-subtask-btn svg,
+.delete-subtask-btn svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Subtask Add Trigger & Composer */
+.todoist-add-subtask-wrap {
+  margin-top: 4px;
+  padding-left: 2px;
+}
+.todoist-add-subtask-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.12s, background 0.12s;
+}
+.todoist-add-subtask-btn:hover {
+  color: var(--domain-accent);
+  background: rgba(0, 0, 0, 0.04);
+}
+.subtask-composer-input {
+  width: 100%;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-strong, #d1d5db);
+  border-radius: 4px;
+  outline: none;
+  background: #ffffff;
+}
+.subtask-composer-input:focus {
+  border-color: var(--domain-accent);
+  box-shadow: 0 0 0 2px rgba(200, 109, 81, 0.15);
+}
+
+/* ==========================================================================
+   Network Status Pill
+   ========================================================================== */
+.network-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  color: var(--text-muted, #6b7280);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.network-pill.online .network-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+.network-pill.offline {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+.network-pill.offline .network-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: pulse-offline 1.5s infinite;
+}
+@keyframes pulse-offline {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ==========================================================================
+   Utility & Backup Tools Dropdown
+   ========================================================================== */
+.ws-tools-dropdown-wrap {
+  position: relative;
+}
+.ws-tools-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-muted, #6b7280);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ws-tools-btn:hover {
+  background: var(--bg-subtle, #f9fafb);
+  color: var(--text-main, #111827);
+  border-color: var(--border-strong, #d1d5db);
+}
+.ws-tools-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 230px;
+  background: #ffffff;
+  border: 1px solid var(--border-strong, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ws-tools-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-main, #374151);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+.ws-tools-item .icon-slot {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted, #6b7280);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ws-tools-item:hover {
+  background: rgba(200, 109, 81, 0.08);
+  color: var(--domain-accent, #c86d51);
+}
+.ws-tools-item:hover .icon-slot {
+  color: var(--domain-accent, #c86d51);
+}
+.ws-tools-divider {
+  height: 1px;
+  background: var(--border-subtle, #e5e7eb);
+  margin: 4px 0;
+}
+
+/* ==========================================================================
+   Floating Undo Delete Toast Banner
+   ========================================================================== */
+.undo-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: #f9fafb;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  min-width: 320px;
+  max-width: 90vw;
+  overflow: hidden;
+  animation: slide-up-toast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slide-up-toast {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.undo-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.undo-toast-content .icon-slot {
+  color: #9ca3af;
+  width: 16px;
+  height: 16px;
+}
+#undo-toast-msg {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.undo-toast-action {
+  background: #c86d51;
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.undo-toast-action:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+.undo-toast-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.undo-toast-close:hover {
+  color: #ffffff;
+}
+.undo-progress {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.undo-progress-bar {
+  height: 100%;
+  width: 100%;
+  background: #c86d51;
+  transform-origin: left;
+  transition: width 5s linear;
+}
+
+/* ==========================================================================
+   Keyboard Shortcuts Dialog
+   ========================================================================== */
+.shortcuts-dialog {
+  max-width: 480px;
+  width: 90vw;
+  padding: 24px;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong, #e5e7eb);
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+.shortcuts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg-subtle, #f9fafb);
+  border: 1px solid var(--border-subtle, #f3f4f6);
+}
+.shortcut-desc {
+  font-size: 13px;
+  color: var(--text-main, #374151);
+  font-weight: 500;
+}
+.shortcut-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2937;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+.shortcut-or {
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 0 4px;
+}
+
+/* ==========================================================================
+   Print Agenda Mode (@media print)
+   ========================================================================== */
+@media print {
+  /* Hide non-printable navigation, docks, banners & controls */
+  #landing-surface,
+  .ws-header,
+  .ws-domain-ribbon,
+  .view-toggle-group,
+  .profile-badge,
+  .domain-banner-right,
+  .nlp-bar,
+  .nlp-preview,
+  .pomodoro-dock,
+  .todoist-add-task-trigger,
+  .todoist-column-actions,
+  .todoist-card-actions,
+  .subtask-row-actions,
+  .todoist-add-subtask-wrap,
+  .todoist-add-section-col,
+  .undo-toast,
+  .shortcuts-dialog {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  .ws-body {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .domain-banner {
+    border-bottom: 2px solid #000000;
+    margin-bottom: 16pt;
+    padding-bottom: 8pt;
+  }
+  .domain-banner-title {
+    font-size: 20pt !important;
+    color: #000000 !important;
+  }
+
+  /* List & Board print presentation */
+  .todoist-board-viewport,
+  .board-view-container {
+    display: block !important;
+    overflow: visible !important;
+  }
+
+  .todoist-board-column {
+    page-break-inside: avoid;
+    border: 1px solid #cccccc !important;
+    background: #ffffff !important;
+    margin-bottom: 14pt !important;
+    min-height: auto !important;
+  }
+
+  .todoist-card {
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0 !important;
+    page-break-inside: avoid;
+  }
+
+  .todoist-card-title {
+    color: #000000 !important;
+    font-weight: 600;
+  }
+
+  .todoist-meta-pill {
+    background: transparent !important;
+    border: 1px solid #cccccc !important;
+    color: #333333 !important;
+  }
+}
+
+

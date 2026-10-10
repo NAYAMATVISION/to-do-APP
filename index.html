@@ -11,6 +11,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet" />
 
+  <!-- PWA & Mobile App Manifest Configuration -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#c86d51" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Komorebi" />
+
   <!-- CSS Stylesheet Dependencies -->
   <link rel="stylesheet" href="css/variables.css" />
   <link rel="stylesheet" href="css/base.css" />
@@ -581,9 +590,14 @@
 
       <div class="ws-divider" aria-hidden="true"></div>
 
-      <!-- 4-Domain Switcher Ribbon (Fitness, Habits, Deep Work, Errands) -->
+      <!-- Domain Switcher Ribbon (Inbox, Fitness, Habits, Deep Work, Errands) -->
       <nav class="ws-domain-ribbon" aria-label="Domain Switcher">
-        <button class="ws-domain-btn active" data-domain="fitness">
+        <button class="ws-domain-btn active" data-domain="inbox">
+          <span class="icon-slot" data-icon="inbox" aria-hidden="true"></span>
+          Inbox
+          <span class="domain-count-badge" id="badge-inbox">0</span>
+        </button>
+        <button class="ws-domain-btn" data-domain="fitness">
           <span class="icon-slot" data-icon="fitness" aria-hidden="true"></span>
           Fitness &amp; Health
           <span class="domain-count-badge" id="badge-fitness">0</span>
@@ -621,18 +635,24 @@
 
       <!-- Triple View Mode Toggles -->
       <div class="view-toggle-group" role="group" aria-label="View Modes">
-        <button class="view-toggle-btn active" data-view="list">
-          <span class="icon-slot" data-icon="list" aria-hidden="true"></span>
-          List
-        </button>
-        <button class="view-toggle-btn" data-view="board">
+        <button class="view-toggle-btn active" data-view="board">
           <span class="icon-slot" data-icon="board" aria-hidden="true"></span>
           Board
+        </button>
+        <button class="view-toggle-btn" data-view="list">
+          <span class="icon-slot" data-icon="list" aria-hidden="true"></span>
+          List
         </button>
         <button class="view-toggle-btn" data-view="calendar">
           <span class="icon-slot" data-icon="calendar" aria-hidden="true"></span>
           Calendar
         </button>
+      </div>
+
+      <!-- Native Network Status Indicator Pill -->
+      <div class="network-pill" id="network-pill" title="Network status">
+        <span class="network-dot"></span>
+        <span class="network-text" id="network-text">Online</span>
       </div>
 
       <!-- Profile Badge -->
@@ -642,6 +662,33 @@
         <button class="sign-out-btn" id="sign-out-btn" title="Sign Out">
           <span class="icon-slot" data-icon="close" aria-hidden="true"></span>
         </button>
+      </div>
+
+      <!-- Utility & Backup Tools Menu -->
+      <div class="ws-tools-dropdown-wrap">
+        <button id="ws-tools-menu-btn" class="ws-tools-btn" title="Backup, Export & Shortcuts" aria-label="Tools Menu">
+          <span class="icon-slot" data-icon="moreHorizontal" aria-hidden="true"></span>
+        </button>
+        <div id="ws-tools-dropdown" class="ws-tools-dropdown" style="display:none;">
+          <button type="button" class="ws-tools-item" id="export-json-btn">
+            <span class="icon-slot" data-icon="download"></span>
+            <span>Backup Workspace (.json)</span>
+          </button>
+          <button type="button" class="ws-tools-item" id="import-json-trigger-btn">
+            <span class="icon-slot" data-icon="upload"></span>
+            <span>Restore Backup (.json)</span>
+          </button>
+          <button type="button" class="ws-tools-item" id="print-agenda-btn">
+            <span class="icon-slot" data-icon="printer"></span>
+            <span>Print Daily Agenda</span>
+          </button>
+          <div class="ws-tools-divider"></div>
+          <button type="button" class="ws-tools-item" id="shortcuts-modal-btn">
+            <span class="icon-slot" data-icon="keyboard"></span>
+            <span>Keyboard Shortcuts (?)</span>
+          </button>
+        </div>
+        <input type="file" id="import-backup-file-input" accept=".json" style="display:none;" />
       </div>
 
       <!-- "+ New Task" Trigger -->
@@ -784,6 +831,7 @@
 <dialog id="task-dialog" class="task-modal" aria-labelledby="dialog-title">
   <form id="task-form" method="dialog">
     <h3 id="dialog-title">Create New Task</h3>
+    <input type="hidden" id="task-edit-id" value="" />
 
     <div class="form-group">
       <label for="task-title-input">Task Name</label>
@@ -798,12 +846,29 @@
 
     <div class="form-row">
       <div class="form-group">
+        <label for="task-section-select">Section</label>
+        <select id="task-section-select">
+          <!-- Dynamically populated from active domain sections -->
+        </select>
+      </div>
+      <div class="form-group">
         <label for="task-priority-select">Priority Flag</label>
         <select id="task-priority-select">
           <option value="p3">Normal (!p3)</option>
           <option value="p2">Medium (!p2)</option>
           <option value="p1">Urgent (!p1)</option>
         </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="task-date-input">Due Date</label>
+        <input
+          type="text"
+          id="task-date-input"
+          placeholder="e.g. Tomorrow, Friday, 17 Oct, or YYYY-MM-DD"
+        />
       </div>
       <div class="form-group">
         <label for="task-status-select">Status Stage</label>
@@ -815,22 +880,6 @@
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="task-date-input">Due Date</label>
-        <input type="date" id="task-date-input" required />
-      </div>
-      <div class="form-group">
-        <label for="task-tag-input">Tag (Optional)</label>
-        <input
-          type="text"
-          id="task-tag-input"
-          placeholder="e.g. fitness, deepwork"
-          autocomplete="off"
-        />
-      </div>
-    </div>
-
     <div class="modal-actions">
       <button type="button" id="close-dialog-btn" class="btn-secondary">Cancel</button>
       <button type="submit" class="btn-primary">Save Task</button>
@@ -838,7 +887,64 @@
   </form>
 </dialog>
 
-<!-- Main Controller ES Module -->
+<!-- Floating Undo Delete Toast Banner -->
+<div id="undo-toast" class="undo-toast" style="display:none;" role="alert" aria-live="polite">
+  <div class="undo-toast-content">
+    <span class="icon-slot" data-icon="trash"></span>
+    <span id="undo-toast-msg">Task deleted</span>
+    <button type="button" id="undo-toast-action" class="undo-toast-action">Undo</button>
+    <button type="button" id="undo-toast-close" class="undo-toast-close" aria-label="Dismiss">&times;</button>
+  </div>
+  <div class="undo-progress"><div id="undo-progress-bar" class="undo-progress-bar"></div></div>
+</div>
+
+<!-- Keyboard Shortcuts Cheatsheet Modal -->
+<dialog id="shortcuts-dialog" class="komorebi-dialog shortcuts-dialog">
+  <div class="dialog-header">
+    <div class="dialog-title-group">
+      <span class="icon-slot" data-icon="keyboard"></span>
+      <h3 class="dialog-title">Keyboard Shortcuts</h3>
+    </div>
+    <button type="button" id="close-shortcuts-btn" class="close-dialog-btn" aria-label="Close dialog">&times;</button>
+  </div>
+  <div class="shortcuts-grid">
+    <div class="shortcut-row"><span class="shortcut-desc">Switch to Board View</span><kbd class="shortcut-key">1</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Switch to List View</span><kbd class="shortcut-key">2</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Switch to Calendar View</span><kbd class="shortcut-key">3</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Quick Capture New Task</span><kbd class="shortcut-key">Q</kbd> <span class="shortcut-or">or</span> <kbd class="shortcut-key">N</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Focus Natural Language Input</span><kbd class="shortcut-key">/</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Print Daily Agenda</span><kbd class="shortcut-key">P</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Backup Workspace (.json)</span><kbd class="shortcut-key">B</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Shortcuts Cheatsheet</span><kbd class="shortcut-key">?</kbd></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Close Modal / Dismiss Dialog</span><kbd class="shortcut-key">Esc</kbd></div>
+  </div>
+</dialog>
+
+<!-- Main Controller ES Module for Web Server -->
 <script type="module" src="js/app.js"></script>
+
+<!-- Standalone bundle fallback for direct local file execution (file:// protocol) -->
+<script>
+  if (window.location.protocol === 'file:') {
+    const s = document.createElement('script');
+    s.src = 'js/bundle.js';
+    document.write(s.outerHTML);
+  }
+</script>
+
+<!-- Service Worker Registration for PWA & Offline Support -->
+<script>
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => {
+          console.log('[PWA] Service Worker registered successfully with scope:', reg.scope);
+        })
+        .catch(err => {
+          console.warn('[PWA] Service Worker registration failed:', err);
+        });
+    });
+  }
+</script>
 </body>
 </html>

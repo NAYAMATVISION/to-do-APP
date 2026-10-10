@@ -9,22 +9,30 @@ A zero-dependency, aesthetic productivity web application built entirely with **
 * **Multi-Workspace Isolation:** Seamlessly toggle between personal routines and professional deliverables with dedicated state scopes.
 * **Triple-View Productivity Engine:**
   * **List View:** Minimalist status-grouped task checklists with circular completion toggles.
-  * **Kanban Board:** Multi-column workflow visualization powered by the native HTML5 Drag and Drop API.
+  * **Kanban Board:** Multi-column workflow visualization powered by the native HTML5 Drag and Drop API with horizontal scroll.
   * **Calendar Grid:** Dynamic month-view planner with task date-mapping and visual indicator pills.
 * **Zero External Dependencies:** Built without UI frameworks, bundlers, or third-party libraries—pure browser APIs only.
+* **Client-Side Backup & Restore:** 100% native JSON workspace backup (`Blob` & `URL.createObjectURL`) and restore (`FileReader` API) with zero server requirement.
+* **5-Second "Undo Delete" Toast:** Safe deletion recovery mechanism allowing instant task restoration before final memory flush.
+* **PWA & Mobile Shell APIs:**
+  * Native App Badging API (`navigator.setAppBadge`) displaying real-time pending task counts on home-screen icons.
+  * Native Vibration API (`navigator.vibrate`) delivering tactile haptic feedback on task completion and drop.
+  * Dynamic Network Status detection (`navigator.onLine`) with visual online/offline indicators.
+  * Web App Manifest and Service Worker caching for offline resilience.
+* **Power Keyboard Navigation & Cheatsheet:** Hotkeys for instant view switching (`1`, `2`, `3`), quick task capture (`Q`/`N`), search (`/`), agenda print (`P`), backup (`B`), and shortcuts dialog (`?`).
+* **Print-Optimized Daily Agenda:** Pure CSS `@media print` layout producing clean, distraction-free paper or PDF checklists.
 * **Reactive State Management:** Custom Observer pattern (Pub/Sub) delivering seamless synchronization across all UI views.
 * **Persistent Local Storage:** Defensive, serialization-safe Web Storage layer preventing state loss on refresh.
-* **PWA & Mobile Installable:** Complete with Web App Manifest and Service Worker caching for offline resilience and an app-like mobile experience.
 
 ---
 
 ## Tech Stack & Browser APIs
 
 * **Core:** HTML5, CSS3, JavaScript (ES6+ Modules)
-* **Storage:** Web Storage API (`localStorage`)
-* **Interactivity:** HTML5 Drag & Drop API (`dragstart`, `dragover`, `drop`)
-* **Components:** HTML5 Native Dialog API (`<dialog>`)
-* **Mobile & Offline:** Web App Manifest, Service Worker API, Cache API
+* **Storage & Portability:** Web Storage API (`localStorage`), File API (`FileReader`), Blob API (`URL.createObjectURL`)
+* **Interactivity & Hardware:** HTML5 Drag & Drop API, Vibration API (`navigator.vibrate`), App Badging API (`navigator.setAppBadge`)
+* **Components & System:** HTML5 Native Dialog API (`<dialog>`), Web Print API (`window.print`, `@media print`)
+* **Mobile & Offline:** Web App Manifest, Service Worker API, Cache API, Network Information (`navigator.onLine`)
 * **Visuals & Layout:** CSS Grid, CSS Flexbox, CSS Custom Properties (Design Tokens)
 
 ---

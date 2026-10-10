@@ -1,0 +1,19 @@
+{
+  "name": "Komorebi Workspace — Task & Habit Manager",
+  "short_name": "Komorebi",
+  "description": "Architectural minimalist productivity engine with 4 isolated domain workspaces.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fdfaf7",
+  "theme_color": "#c86d51",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
