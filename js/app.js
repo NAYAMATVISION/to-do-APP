@@ -1285,9 +1285,10 @@ function bootstrapApp() {
   initToolsDropdownAndBackup();
   initKeyboardShortcuts();
 
-  // 14. Auto-seed authentic Todoist Dummy Data from Source Image ONLY if never initialized
+  // 14. Auto-seed authentic Todoist Dummy Data from Source Image ONLY for demo / guest mode if never initialized
+  const isDemoOrGuest = !auth.isAuthenticated || auth.isDemo;
   const existingSavedTasks = storage.getTasks(auth.userId);
-  if (existingSavedTasks === null && localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {
+  if (isDemoOrGuest && existingSavedTasks === null && localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {
     state.resetToDefaultTemplates();
     localStorage.setItem('komorebi_source_seeded_v4', 'true');
   } else if (localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {

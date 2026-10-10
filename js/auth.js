@@ -64,6 +64,16 @@ class AuthManager {
     this.users[cleanEmail] = user;
     storage.saveUsers(this.users);
 
+    // Explicitly initialize clean, empty workspace for the new user
+    storage.saveTasks(userId, []);
+    storage.saveDomain(userId, 'inbox');
+    storage.saveView(userId, 'board');
+    storage.saveSections(userId, 'inbox', ['(No Section)']);
+    storage.saveSections(userId, 'fitness', ['Backlog', 'In Progress', 'Done / Review']);
+    storage.saveSections(userId, 'habits', ['Daily Morning', 'Afternoon Flow', 'Evening Rituals']);
+    storage.saveSections(userId, 'deepwork', ['Sprint Backlog', 'Active Focus', 'Shipped']);
+    storage.saveSections(userId, 'errands', ['To Buy', 'In Cart', 'Completed']);
+
     return this._setSession(user, false);
   }
 

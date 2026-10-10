@@ -1501,6 +1501,16 @@ class AuthManager {
     this.users[cleanEmail] = user;
     storage.saveUsers(this.users);
 
+    // Explicitly initialize clean, empty workspace for the new user
+    storage.saveTasks(userId, []);
+    storage.saveDomain(userId, 'inbox');
+    storage.saveView(userId, 'board');
+    storage.saveSections(userId, 'inbox', ['(No Section)']);
+    storage.saveSections(userId, 'fitness', DEFAULT_SECTIONS.fitness);
+    storage.saveSections(userId, 'habits', DEFAULT_SECTIONS.habits);
+    storage.saveSections(userId, 'deepwork', DEFAULT_SECTIONS.deepwork);
+    storage.saveSections(userId, 'errands', DEFAULT_SECTIONS.errands);
+
     return this._setSession(user, false);
   }
 
@@ -1572,6 +1582,14 @@ const today = todayISO();
 const tomorrow = addDaysISO(today, 1);
 
 const DEFAULT_SECTIONS = {
+  inbox: ['(No Section)'],
+  fitness: ['Backlog', 'In Progress', 'Done / Review'],
+  habits: ['Daily Morning', 'Afternoon Flow', 'Evening Rituals'],
+  deepwork: ['Sprint Backlog', 'Active Focus', 'Shipped'],
+  errands: ['To Buy', 'In Cart', 'Completed'],
+};
+
+const DEMO_SECTIONS = {
   inbox: [
     '(No Section)',
     '22-23-24 august',
@@ -1587,6 +1605,30 @@ const DEFAULT_SECTIONS = {
   deepwork: ['Sprint Backlog', 'Active Focus', 'Shipped'],
   errands: ['To Buy', 'In Cart', 'Completed'],
 };
+
+const LEGACY_MOCK_SECTIONS = new Set([
+  '22-23-24 august',
+  '25 Aug',
+  '27 august',
+  '29 august',
+  '31 august',
+  '3-4-5-6-7sept',
+  '8sept'
+]);
+
+const DEMO_TASK_IDS = new Set([
+  'task-ns-1', 'task-ns-2', 'task-ns-3',
+  'task-aug22-1', 'task-aug22-2', 'task-aug22-3', 'task-aug22-4', 'task-aug22-5', 'task-aug22-6', 'task-aug22-7',
+  'task-aug25-1', 'task-aug25-2', 'task-aug25-3', 'task-aug25-4', 'task-aug25-5',
+  'task-aug27-1', 'task-aug27-2', 'task-aug27-3', 'task-aug27-4', 'task-aug27-5',
+  'task-aug29-1', 'task-aug29-2', 'task-aug29-3',
+  'task-aug31-1', 'task-aug31-2', 'task-aug31-3',
+  'task-sept-1', 'task-sept-2', 'task-sept-3', 'task-sept-4', 'task-sept-5', 'task-sept-6', 'task-sept-7', 'task-sept-8', 'task-sept-9',
+  'fit-1', 'fit-2', 'fit-3',
+  'hab-1', 'hab-2', 'hab-3',
+  'dw-1', 'dw-2', 'dw-3',
+  'err-1', 'err-2', 'err-3'
+]);
 
 function getDefaultTasks() {
   return [
@@ -1973,9 +2015,27 @@ class StateManager {
    */
   reloadForUser() {
     const userId = auth.userId;
+    const isDemo = auth.isDemo || !auth.isAuthenticated;
     const saved = storage.getTasks(userId);
-    // Respect user modifications: only fallback to getDefaultTasks if key was never created in storage
-    this.tasks = Array.isArray(saved) ? saved : getDefaultTasks();
+
+    if (Array.isArray(saved)) {
+      if (!isDemo) {
+        // Authenticated real user: purge any leaked demo tasks from storage
+        const hasDemoTasks = saved.some(t => DEMO_TASK_IDS.has(t.id));
+        this.tasks = saved.filter(t => !DEMO_TASK_IDS.has(t.id));
+        if (hasDemoTasks) {
+          storage.saveTasks(userId, this.tasks);
+        }
+      } else {
+        this.tasks = saved;
+      }
+    } else {
+      // Key was never created in storage:
+      // Real authenticated user starts with an empty workspace ([]);
+      // Demo/Guest user gets the interactive showcase tasks (getDefaultTasks())
+      this.tasks = isDemo ? getDefaultTasks() : [];
+      storage.saveTasks(userId, this.tasks);
+    }
 
     // Standardize legacy 'workspace' field to 'domain'
     this.tasks.forEach(t => {
@@ -1997,11 +2057,17 @@ class StateManager {
     // Apply dynamic body data-domain attribute for CSS theme switching
     document.body.dataset.domain = this.activeDomain;
 
-    if (!Array.isArray(saved)) {
-      storage.saveTasks(userId, this.tasks);
-      storage.saveDomain(userId, this.activeDomain);
-      storage.saveView(userId, this.currentView);
+    if (!isDemo && this.activeDomain === 'inbox') {
+      // Clean up any legacy demo august date sections from user storage
+      const savedInboxSections = storage.getSections(userId, 'inbox');
+      if (savedInboxSections && savedInboxSections.some(s => LEGACY_MOCK_SECTIONS.has(s))) {
+        const cleaned = savedInboxSections.filter(s => !LEGACY_MOCK_SECTIONS.has(s));
+        storage.saveSections(userId, 'inbox', cleaned.length > 0 ? cleaned : ['(No Section)']);
+      }
     }
+
+    storage.saveDomain(userId, this.activeDomain);
+    storage.saveView(userId, this.currentView);
     this._notify();
   }
 
@@ -2040,10 +2106,19 @@ class StateManager {
 
   getSections(domain = this.activeDomain) {
     const userId = auth.userId;
+    const isDemo = auth.isDemo || !auth.isAuthenticated;
     const custom = storage.getSections(userId, domain);
-    if (custom && custom.length > 0) return custom;
+    if (custom && custom.length > 0) {
+      if (!isDemo && domain === 'inbox') {
+        const cleaned = custom.filter(s => !LEGACY_MOCK_SECTIONS.has(s));
+        return cleaned.length > 0 ? cleaned : ['(No Section)'];
+      }
+      return custom;
+    }
 
-    const defaults = DEFAULT_SECTIONS[domain] || ['(No Section)'];
+    const defaults = (isDemo && domain === 'inbox')
+      ? (DEMO_SECTIONS[domain] || ['(No Section)'])
+      : (DEFAULT_SECTIONS[domain] || ['(No Section)']);
 
     // Discover any additional sections that tasks might already have
     const taskSections = [...new Set(
@@ -2373,7 +2448,7 @@ class StateManager {
   resetToDefaultTemplates() {
     this.tasks = getDefaultTasks();
     storage.saveTasks(auth.userId, this.tasks);
-    storage.saveSections(auth.userId, 'inbox', DEFAULT_SECTIONS.inbox);
+    storage.saveSections(auth.userId, 'inbox', DEMO_SECTIONS.inbox);
     this.activeDomain = 'inbox';
     this.currentView = 'board';
     this._notify();
@@ -4587,9 +4662,10 @@ function bootstrapApp() {
   initToolsDropdownAndBackup();
   initKeyboardShortcuts();
 
-  // 14. Auto-seed authentic Todoist Dummy Data from Source Image ONLY if never initialized
+  // 14. Auto-seed authentic Todoist Dummy Data from Source Image ONLY for demo / guest mode if never initialized
+  const isDemoOrGuest = !auth.isAuthenticated || auth.isDemo;
   const existingSavedTasks = storage.getTasks(auth.userId);
-  if (existingSavedTasks === null && localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {
+  if (isDemoOrGuest && existingSavedTasks === null && localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {
     state.resetToDefaultTemplates();
     localStorage.setItem('komorebi_source_seeded_v4', 'true');
   } else if (localStorage.getItem('komorebi_source_seeded_v4') !== 'true') {

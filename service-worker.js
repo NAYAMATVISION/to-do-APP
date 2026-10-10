@@ -3,7 +3,7 @@
  * Version: 1.0.0
  */
 
-const CACHE_NAME = 'komorebi-cache-v3';
+const CACHE_NAME = 'komorebi-cache-v4';
 
 // Static assets to pre-cache on installation
 const PRECACHE_ASSETS = [
