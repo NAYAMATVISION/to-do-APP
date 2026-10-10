@@ -30,6 +30,48 @@ class AuthManager {
   }
 
   /**
+   * Finds a user by email, name/username, or email prefix.
+   * @param {string} identifier
+   */
+  findUser(identifier) {
+    if (!identifier) return null;
+    const clean = identifier.trim().toLowerCase();
+    this.users = storage.getUsers();
+
+    // 1. Direct key match (case-insensitive)
+    for (const key of Object.keys(this.users)) {
+      if (key.trim().toLowerCase() === clean) {
+        return this.users[key];
+      }
+    }
+
+    // 2. Value property match: email, name, or username before @
+    for (const user of Object.values(this.users)) {
+      if (!user) continue;
+      const userEmail = (user.email || '').trim().toLowerCase();
+      const userName  = (user.name || '').trim().toLowerCase();
+      const userPrefix = userEmail.includes('@') ? userEmail.split('@')[0] : '';
+
+      if (userEmail === clean || userName === clean || userPrefix === clean) {
+        return user;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns list of accounts stored on this device.
+   * @returns {Array<{name: string, email: string}>}
+   */
+  getRegisteredAccounts() {
+    this.users = storage.getUsers();
+    return Object.values(this.users)
+      .filter(u => u && u.email)
+      .map(u => ({ name: u.name || 'User', email: u.email }));
+  }
+
+  /**
    * Registers a new account.
    * @param {string} name
    * @param {string} email
@@ -38,17 +80,18 @@ class AuthManager {
   register({ name, email, password }) {
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
+    const cleanPassword = password ? password.trim() : '';
 
-    if (!cleanName || !cleanEmail || !password) {
+    if (!cleanName || !cleanEmail || !cleanPassword) {
       throw new Error('Please fill in all required fields.');
     }
 
-    if (password.length < 6) {
+    if (cleanPassword.length < 6) {
       throw new Error('Password must be at least 6 characters.');
     }
 
     this.users = storage.getUsers();
-    if (this.users[cleanEmail]) {
+    if (this.findUser(cleanEmail)) {
       throw new Error('An account with this email already exists.');
     }
 
@@ -57,7 +100,7 @@ class AuthManager {
       id: userId,
       name: cleanName,
       email: cleanEmail,
-      password, // Mock account storage
+      password: cleanPassword, // Mock account storage
       createdAt: new Date().toISOString(),
     };
 
@@ -78,18 +121,59 @@ class AuthManager {
   }
 
   /**
-   * Signs in an existing user.
+   * Signs in an existing user with email or username.
    * @param {string} email
    * @param {string} password
    */
   login({ email, password }) {
-    const cleanEmail = email.trim().toLowerCase();
-    this.users = storage.getUsers();
-
-    const user = this.users[cleanEmail];
-    if (!user || user.password !== password) {
-      throw new Error('Invalid email or password.');
+    if (!email || !password) {
+      throw new Error('Please provide both your email/username and password.');
     }
+
+    const user = this.findUser(email);
+    if (!user) {
+      throw new Error('No account found with this email or username.');
+    }
+
+    const cleanInputPass = password.trim();
+    const cleanSavedPass = (user.password || '').trim();
+    const isMatch = user.password === password ||
+                    user.password === cleanInputPass ||
+                    cleanSavedPass === cleanInputPass;
+
+    if (!isMatch) {
+      throw new Error('Incorrect password. Please try again or use "Forgot password?".');
+    }
+
+    return this._setSession(user, false);
+  }
+
+  /**
+   * Resets password for an existing account and automatically logs in.
+   * @param {string} email
+   * @param {string} newPassword
+   */
+  resetPassword({ email, newPassword }) {
+    if (!email || !newPassword) {
+      throw new Error('Please provide your email address and new password.');
+    }
+
+    const cleanPass = newPassword.trim();
+    if (cleanPass.length < 6) {
+      throw new Error('Password must be at least 6 characters.');
+    }
+
+    const user = this.findUser(email);
+    if (!user) {
+      throw new Error(`No account found matching "${email.trim()}".`);
+    }
+
+    this.users = storage.getUsers();
+    const targetKey = Object.keys(this.users).find(k => this.users[k]?.id === user.id) || (user.email ? user.email.trim().toLowerCase() : user.id);
+
+    user.password = cleanPass;
+    this.users[targetKey] = user;
+    storage.saveUsers(this.users);
 
     return this._setSession(user, false);
   }

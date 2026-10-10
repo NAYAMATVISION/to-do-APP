@@ -13,6 +13,10 @@ import { initTiltPhysics }     from './utils/tiltPhysics.js';
 import { initBreathingEngine } from './utils/breathingEngine.js';
 import { initPhilosophySection } from './utils/philosophyLens.js';
 
+// Global references for resilient component interop
+window.__komorebi_auth = auth;
+window.__komorebi_state = state;
+
 /* ── Preset Template Definitions per Domain ──────────────────────────────── */
 const TEMPLATES = {
   fitness: {
@@ -132,7 +136,7 @@ function initScrollReveals() {
 
 /* ── Scroll-Triggered Rolling Numerical Stat Counters ────────────────────── */
 function initRollingCounters() {
-  const counterElements = $$('[data-target]');
+  const counterElements = $$('.feature-stat-num[data-target]');
   if (!counterElements.length) return;
 
   if ('IntersectionObserver' in window) {
@@ -201,6 +205,7 @@ export function switchSurface(surface) {
   showSurface(surfaceId);
   syncLandingHeaderAuth();
 }
+window.__komorebi_switchSurface = switchSurface;
 
 function showSurface(surfaceId) {
   const landing = $('landing-surface');
@@ -645,40 +650,85 @@ function initTaskDialog() {
 
 /* ── Authentication Modal Controller (<dialog id="auth-modal">) ──────────── */
 function initAuthModal() {
-  const modal       = $('auth-modal');
-  const signinForm  = $('signin-form');
-  const regForm     = $('register-form');
-  const tabSignin   = $('tab-signin-btn');
-  const tabRegister = $('tab-register-btn');
-  const authTitle   = $('auth-modal-title');
-  const authSub     = $('auth-modal-sub');
-  const errorEl     = $('auth-error');
-  const demoBtn     = $('auth-demo-btn');
+  const modal         = $('auth-modal');
+  const signinForm    = $('signin-form');
+  const regForm       = $('register-form');
+  const forgotForm    = $('forgot-form');
+  const tabSignin     = $('tab-signin-btn');
+  const tabRegister   = $('tab-register-btn');
+  const authForgotBtn = $('auth-forgot-btn');
+  const forgotBackBtn = $('forgot-back-btn');
+  const authTitle     = $('auth-modal-title');
+  const authSub       = $('auth-modal-sub');
+  const errorEl       = $('auth-error');
+  const demoBtn       = $('auth-demo-btn');
   if (!modal) return;
+
+  // Initialize eye toggle buttons on all password inputs
+  $$('.toggle-password-btn').forEach(btn => {
+    btn.innerHTML = icons.eye || '';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = btn.dataset.passTarget || btn.dataset.target;
+      const input = $(targetId);
+      if (!input) return;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.innerHTML = isPassword ? (icons.eyeOff || '') : (icons.eye || '');
+      btn.title = isPassword ? 'Hide password' : 'Show password';
+      btn.setAttribute('aria-label', btn.title);
+    });
+  });
 
   function showTab(type) {
     errorEl.classList.remove('visible');
     errorEl.textContent = '';
 
     if (type === 'signin') {
-      tabSignin.classList.add('active');
-      tabRegister.classList.remove('active');
-      signinForm.style.display = 'flex';
-      regForm.style.display    = 'none';
-      if (authTitle) authTitle.textContent = 'Welcome back';
-      if (authSub)   authSub.textContent   = 'Sign in to access your isolated workspace store.';
-    } else {
-      tabRegister.classList.add('active');
-      tabSignin.classList.remove('active');
-      regForm.style.display    = 'flex';
-      signinForm.style.display = 'none';
-      if (authTitle) authTitle.textContent = 'Create an Account';
-      if (authSub)   authSub.textContent   = 'Setup your personal isolated workspace.';
+      tabSignin?.classList.add('active');
+      tabRegister?.classList.remove('active');
+      if (signinForm) signinForm.style.display = 'flex';
+      if (regForm)    regForm.style.display    = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (authTitle)  authTitle.textContent    = 'Welcome back';
+      if (authSub)    authSub.textContent      = 'Sign in to access your isolated workspace store.';
+    } else if (type === 'register') {
+      tabRegister?.classList.add('active');
+      tabSignin?.classList.remove('active');
+      if (regForm)    regForm.style.display    = 'flex';
+      if (signinForm) signinForm.style.display = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (authTitle)  authTitle.textContent    = 'Create an Account';
+      if (authSub)    authSub.textContent      = 'Setup your personal isolated workspace.';
+    } else if (type === 'forgot') {
+      tabSignin?.classList.remove('active');
+      tabRegister?.classList.remove('active');
+      if (signinForm) signinForm.style.display = 'none';
+      if (regForm)    regForm.style.display    = 'none';
+      if (forgotForm) forgotForm.style.display = 'flex';
+      if (authTitle)  authTitle.textContent    = 'Reset Password';
+      if (authSub)    authSub.textContent      = 'Enter your registered email and choose a new password.';
     }
   }
 
   if (tabSignin)   tabSignin.addEventListener('click',   () => showTab('signin'));
   if (tabRegister) tabRegister.addEventListener('click', () => showTab('register'));
+  if (authForgotBtn) {
+    authForgotBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentEmail = $('signin-email')?.value?.trim() || '';
+      showTab('forgot');
+      if (currentEmail && $('forgot-email')) {
+        $('forgot-email').value = currentEmail;
+      }
+    });
+  }
+  if (forgotBackBtn) {
+    forgotBackBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showTab('signin');
+    });
+  }
 
   $$('#nav-signin-btn, #hero-register-btn, #footer-signin-btn, #footer-register-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -724,6 +774,32 @@ function initAuthModal() {
 
       try {
         auth.register({ name, email, password: pass });
+        modal.close();
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
+        switchSurface('app');
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.add('visible');
+      }
+    });
+  }
+
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const email    = $('forgot-email').value;
+      const newPass  = $('forgot-new-password').value;
+      const confPass = $('forgot-confirm-password').value;
+
+      if (newPass !== confPass) {
+        errorEl.textContent = 'Passwords do not match. Please re-enter.';
+        errorEl.classList.add('visible');
+        return;
+      }
+
+      try {
+        auth.resetPassword({ email, newPassword: newPass });
         modal.close();
         if (typeof state.syncUser === 'function') state.syncUser();
         else state.reloadForUser();

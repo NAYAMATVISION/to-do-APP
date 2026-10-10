@@ -238,6 +238,16 @@ const icons = {
     <line x1="18" y1="12" x2="18.01" y2="12"/>
     <line x1="8" y1="16" x2="16" y2="16"/>
   </svg>`,
+
+  eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>`,
+
+  eyeOff: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+    <line x1="1" y1="1" x2="23" y2="23"/>
+  </svg>`,
 };
 
 
@@ -1467,6 +1477,48 @@ class AuthManager {
   }
 
   /**
+   * Finds a user by email, name/username, or email prefix.
+   * @param {string} identifier
+   */
+  findUser(identifier) {
+    if (!identifier) return null;
+    const clean = identifier.trim().toLowerCase();
+    this.users = storage.getUsers();
+
+    // 1. Direct key match (case-insensitive)
+    for (const key of Object.keys(this.users)) {
+      if (key.trim().toLowerCase() === clean) {
+        return this.users[key];
+      }
+    }
+
+    // 2. Value property match: email, name, or username before @
+    for (const user of Object.values(this.users)) {
+      if (!user) continue;
+      const userEmail = (user.email || '').trim().toLowerCase();
+      const userName  = (user.name || '').trim().toLowerCase();
+      const userPrefix = userEmail.includes('@') ? userEmail.split('@')[0] : '';
+
+      if (userEmail === clean || userName === clean || userPrefix === clean) {
+        return user;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Returns list of accounts stored on this device.
+   * @returns {Array<{name: string, email: string}>}
+   */
+  getRegisteredAccounts() {
+    this.users = storage.getUsers();
+    return Object.values(this.users)
+      .filter(u => u && u.email)
+      .map(u => ({ name: u.name || 'User', email: u.email }));
+  }
+
+  /**
    * Registers a new account.
    * @param {string} name
    * @param {string} email
@@ -1475,17 +1527,18 @@ class AuthManager {
   register({ name, email, password }) {
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
+    const cleanPassword = password ? password.trim() : '';
 
-    if (!cleanName || !cleanEmail || !password) {
+    if (!cleanName || !cleanEmail || !cleanPassword) {
       throw new Error('Please fill in all required fields.');
     }
 
-    if (password.length < 6) {
+    if (cleanPassword.length < 6) {
       throw new Error('Password must be at least 6 characters.');
     }
 
     this.users = storage.getUsers();
-    if (this.users[cleanEmail]) {
+    if (this.findUser(cleanEmail)) {
       throw new Error('An account with this email already exists.');
     }
 
@@ -1494,7 +1547,7 @@ class AuthManager {
       id: userId,
       name: cleanName,
       email: cleanEmail,
-      password, // Mock account storage
+      password: cleanPassword, // Mock account storage
       createdAt: new Date().toISOString(),
     };
 
@@ -1515,18 +1568,59 @@ class AuthManager {
   }
 
   /**
-   * Signs in an existing user.
+   * Signs in an existing user with email or username.
    * @param {string} email
    * @param {string} password
    */
   login({ email, password }) {
-    const cleanEmail = email.trim().toLowerCase();
-    this.users = storage.getUsers();
-
-    const user = this.users[cleanEmail];
-    if (!user || user.password !== password) {
-      throw new Error('Invalid email or password.');
+    if (!email || !password) {
+      throw new Error('Please provide both your email/username and password.');
     }
+
+    const user = this.findUser(email);
+    if (!user) {
+      throw new Error('No account found with this email or username.');
+    }
+
+    const cleanInputPass = password.trim();
+    const cleanSavedPass = (user.password || '').trim();
+    const isMatch = user.password === password ||
+                    user.password === cleanInputPass ||
+                    cleanSavedPass === cleanInputPass;
+
+    if (!isMatch) {
+      throw new Error('Incorrect password. Please try again or use "Forgot password?".');
+    }
+
+    return this._setSession(user, false);
+  }
+
+  /**
+   * Resets password for an existing account and automatically logs in.
+   * @param {string} email
+   * @param {string} newPassword
+   */
+  resetPassword({ email, newPassword }) {
+    if (!email || !newPassword) {
+      throw new Error('Please provide your email address and new password.');
+    }
+
+    const cleanPass = newPassword.trim();
+    if (cleanPass.length < 6) {
+      throw new Error('Password must be at least 6 characters.');
+    }
+
+    const user = this.findUser(email);
+    if (!user) {
+      throw new Error(`No account found matching "${email.trim()}".`);
+    }
+
+    this.users = storage.getUsers();
+    const targetKey = Object.keys(this.users).find(k => this.users[k]?.id === user.id) || (user.email ? user.email.trim().toLowerCase() : user.id);
+
+    user.password = cleanPass;
+    this.users[targetKey] = user;
+    storage.saveUsers(this.users);
 
     return this._setSession(user, false);
   }
@@ -2456,6 +2550,8 @@ class StateManager {
 }
 
 const state = new StateManager();
+window.__komorebi_auth = auth;
+window.__komorebi_state = state;
 
 
   /* ── Bundle Module: js/views/listView.js ── */
@@ -3509,7 +3605,7 @@ function initScrollReveals() {
 
 /* ── Scroll-Triggered Rolling Numerical Stat Counters ────────────────────── */
 function initRollingCounters() {
-  const counterElements = $$('[data-target]');
+  const counterElements = $$('.feature-stat-num[data-target]');
   if (!counterElements.length) return;
 
   if ('IntersectionObserver' in window) {
@@ -3578,6 +3674,7 @@ function switchSurface(surface) {
   showSurface(surfaceId);
   syncLandingHeaderAuth();
 }
+window.__komorebi_switchSurface = switchSurface;
 
 function showSurface(surfaceId) {
   const landing = $('landing-surface');
@@ -4022,40 +4119,85 @@ function initTaskDialog() {
 
 /* ── Authentication Modal Controller (<dialog id="auth-modal">) ──────────── */
 function initAuthModal() {
-  const modal       = $('auth-modal');
-  const signinForm  = $('signin-form');
-  const regForm     = $('register-form');
-  const tabSignin   = $('tab-signin-btn');
-  const tabRegister = $('tab-register-btn');
-  const authTitle   = $('auth-modal-title');
-  const authSub     = $('auth-modal-sub');
-  const errorEl     = $('auth-error');
-  const demoBtn     = $('auth-demo-btn');
+  const modal         = $('auth-modal');
+  const signinForm    = $('signin-form');
+  const regForm       = $('register-form');
+  const forgotForm    = $('forgot-form');
+  const tabSignin     = $('tab-signin-btn');
+  const tabRegister   = $('tab-register-btn');
+  const authForgotBtn = $('auth-forgot-btn');
+  const forgotBackBtn = $('forgot-back-btn');
+  const authTitle     = $('auth-modal-title');
+  const authSub       = $('auth-modal-sub');
+  const errorEl       = $('auth-error');
+  const demoBtn       = $('auth-demo-btn');
   if (!modal) return;
+
+  // Initialize eye toggle buttons on all password inputs
+  $$('.toggle-password-btn').forEach(btn => {
+    btn.innerHTML = icons.eye || '';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = btn.dataset.passTarget || btn.dataset.target;
+      const input = $(targetId);
+      if (!input) return;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      btn.innerHTML = isPassword ? (icons.eyeOff || '') : (icons.eye || '');
+      btn.title = isPassword ? 'Hide password' : 'Show password';
+      btn.setAttribute('aria-label', btn.title);
+    });
+  });
 
   function showTab(type) {
     errorEl.classList.remove('visible');
     errorEl.textContent = '';
 
     if (type === 'signin') {
-      tabSignin.classList.add('active');
-      tabRegister.classList.remove('active');
-      signinForm.style.display = 'flex';
-      regForm.style.display    = 'none';
-      if (authTitle) authTitle.textContent = 'Welcome back';
-      if (authSub)   authSub.textContent   = 'Sign in to access your isolated workspace store.';
-    } else {
-      tabRegister.classList.add('active');
-      tabSignin.classList.remove('active');
-      regForm.style.display    = 'flex';
-      signinForm.style.display = 'none';
-      if (authTitle) authTitle.textContent = 'Create an Account';
-      if (authSub)   authSub.textContent   = 'Setup your personal isolated workspace.';
+      tabSignin?.classList.add('active');
+      tabRegister?.classList.remove('active');
+      if (signinForm) signinForm.style.display = 'flex';
+      if (regForm)    regForm.style.display    = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (authTitle)  authTitle.textContent    = 'Welcome back';
+      if (authSub)    authSub.textContent      = 'Sign in to access your isolated workspace store.';
+    } else if (type === 'register') {
+      tabRegister?.classList.add('active');
+      tabSignin?.classList.remove('active');
+      if (regForm)    regForm.style.display    = 'flex';
+      if (signinForm) signinForm.style.display = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (authTitle)  authTitle.textContent    = 'Create an Account';
+      if (authSub)    authSub.textContent      = 'Setup your personal isolated workspace.';
+    } else if (type === 'forgot') {
+      tabSignin?.classList.remove('active');
+      tabRegister?.classList.remove('active');
+      if (signinForm) signinForm.style.display = 'none';
+      if (regForm)    regForm.style.display    = 'none';
+      if (forgotForm) forgotForm.style.display = 'flex';
+      if (authTitle)  authTitle.textContent    = 'Reset Password';
+      if (authSub)    authSub.textContent      = 'Enter your registered email and choose a new password.';
     }
   }
 
   if (tabSignin)   tabSignin.addEventListener('click',   () => showTab('signin'));
   if (tabRegister) tabRegister.addEventListener('click', () => showTab('register'));
+  if (authForgotBtn) {
+    authForgotBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentEmail = $('signin-email')?.value?.trim() || '';
+      showTab('forgot');
+      if (currentEmail && $('forgot-email')) {
+        $('forgot-email').value = currentEmail;
+      }
+    });
+  }
+  if (forgotBackBtn) {
+    forgotBackBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showTab('signin');
+    });
+  }
 
   $$('#nav-signin-btn, #hero-register-btn, #footer-signin-btn, #footer-register-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -4101,6 +4243,32 @@ function initAuthModal() {
 
       try {
         auth.register({ name, email, password: pass });
+        modal.close();
+        if (typeof state.syncUser === 'function') state.syncUser();
+        else state.reloadForUser();
+        switchSurface('app');
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.add('visible');
+      }
+    });
+  }
+
+  if (forgotForm) {
+    forgotForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const email    = $('forgot-email').value;
+      const newPass  = $('forgot-new-password').value;
+      const confPass = $('forgot-confirm-password').value;
+
+      if (newPass !== confPass) {
+        errorEl.textContent = 'Passwords do not match. Please re-enter.';
+        errorEl.classList.add('visible');
+        return;
+      }
+
+      try {
+        auth.resetPassword({ email, newPassword: newPass });
         modal.close();
         if (typeof state.syncUser === 'function') state.syncUser();
         else state.reloadForUser();

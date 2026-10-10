@@ -26,6 +26,88 @@
   <link rel="stylesheet" href="css/landing.css" />
   <link rel="stylesheet" href="css/philosophy.css" />
   <link rel="stylesheet" href="css/workspace.css" />
+
+  <!-- Critical Auth Modal & Password Toggle Styling -->
+  <style>
+    .auth-label-row {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+      margin-bottom: 2px !important;
+    }
+    .auth-label-row label {
+      margin: 0 !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      color: var(--text-muted, #7c776e) !important;
+    }
+    .auth-forgot-link {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: #c86d51 !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      background: none !important;
+      border: none !important;
+      padding: 0 !important;
+      line-height: 1 !important;
+      font-family: inherit !important;
+      transition: color 0.15s ease !important;
+    }
+    .auth-forgot-link:hover {
+      text-decoration: underline !important;
+      color: #a85237 !important;
+    }
+    .password-input-wrap {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      width: 100% !important;
+    }
+    .password-input-wrap input {
+      width: 100% !important;
+      padding-right: 44px !important;
+      box-sizing: border-box !important;
+    }
+    .toggle-password-btn {
+      position: absolute !important;
+      right: 6px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 6px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: var(--text-muted, #7c776e) !important;
+      cursor: pointer !important;
+      border-radius: 4px !important;
+      line-height: 1 !important;
+      z-index: 2 !important;
+    }
+    .toggle-password-btn:hover {
+      color: var(--text-main, #2b2823) !important;
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+    .toggle-password-btn svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke: currentColor !important;
+      stroke-width: 2 !important;
+      fill: none !important;
+      display: block !important;
+      pointer-events: none !important;
+    }
+    .auth-back-row {
+      display: flex !important;
+      justify-content: center !important;
+      margin-top: 8px !important;
+    }
+  </style>
 </head>
 <body data-domain="fitness">
 
@@ -789,12 +871,18 @@
     <!-- Sign In Form -->
     <form id="signin-form" class="auth-form" autocomplete="off">
       <div class="auth-input-group">
-        <label for="signin-email">Email Address</label>
-        <input type="email" id="signin-email" placeholder="name@domain.com" required />
+        <label for="signin-email">Email Address or Username</label>
+        <input type="text" id="signin-email" placeholder="name@domain.com or username" required autocomplete="username" />
       </div>
       <div class="auth-input-group">
-        <label for="signin-password">Password</label>
-        <input type="password" id="signin-password" placeholder="••••••••" required />
+        <div class="auth-label-row">
+          <label for="signin-password">Password</label>
+          <button type="button" class="auth-forgot-link" id="auth-forgot-btn">Forgot password?</button>
+        </div>
+        <div class="password-input-wrap">
+          <input type="password" id="signin-password" placeholder="••••••••" required autocomplete="current-password" />
+          <button type="button" class="toggle-password-btn" data-pass-target="signin-password" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
       </div>
       <button type="submit" class="btn-primary" style="width:100%;">Sign In</button>
     </form>
@@ -803,17 +891,46 @@
     <form id="register-form" class="auth-form" style="display:none;" autocomplete="off">
       <div class="auth-input-group">
         <label for="register-name">Full Name</label>
-        <input type="text" id="register-name" placeholder="e.g. Alex Morgan" required />
+        <input type="text" id="register-name" placeholder="e.g. Alex Morgan" required autocomplete="name" />
       </div>
       <div class="auth-input-group">
         <label for="register-email">Email Address</label>
-        <input type="email" id="register-email" placeholder="name@domain.com" required />
+        <input type="email" id="register-email" placeholder="name@domain.com" required autocomplete="email" />
       </div>
       <div class="auth-input-group">
         <label for="register-password">Password (min 6 characters)</label>
-        <input type="password" id="register-password" placeholder="••••••••" required />
+        <div class="password-input-wrap">
+          <input type="password" id="register-password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+          <button type="button" class="toggle-password-btn" data-pass-target="register-password" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
       </div>
       <button type="submit" class="btn-primary" style="width:100%;">Create Account</button>
+    </form>
+
+    <!-- Forgot / Reset Password Form (Hidden by default) -->
+    <form id="forgot-form" class="auth-form" style="display:none;" autocomplete="off">
+      <div class="auth-input-group">
+        <label for="forgot-email">Registered Email Address or Username</label>
+        <input type="text" id="forgot-email" placeholder="name@domain.com or username" required autocomplete="username" />
+      </div>
+      <div class="auth-input-group">
+        <label for="forgot-new-password">New Password (min 6 characters)</label>
+        <div class="password-input-wrap">
+          <input type="password" id="forgot-new-password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+          <button type="button" class="toggle-password-btn" data-pass-target="forgot-new-password" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <div class="auth-input-group">
+        <label for="forgot-confirm-password">Confirm New Password</label>
+        <div class="password-input-wrap">
+          <input type="password" id="forgot-confirm-password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+          <button type="button" class="toggle-password-btn" data-pass-target="forgot-confirm-password" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;">Reset Password & Sign In</button>
+      <div class="auth-back-row">
+        <button type="button" class="btn-subtle-sm" id="forgot-back-btn" style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:6px 12px;font-size:12px;">← Back to Sign In</button>
+      </div>
     </form>
 
     <div class="auth-demo-divider">OR</div>
@@ -945,6 +1062,176 @@
         });
     });
   }
+</script>
+<!-- Inline Resilient Controller for Auth & Forgot Password Flow -->
+<script>
+  (function() {
+    const EYE_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const EYE_OFF_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+    function setupAuthInline() {
+      const modal = document.getElementById('auth-modal');
+      const forgotLink = document.getElementById('auth-forgot-btn');
+      const forgotBack = document.getElementById('forgot-back-btn');
+      const signinForm = document.getElementById('signin-form');
+      const registerForm = document.getElementById('register-form');
+      const forgotForm = document.getElementById('forgot-form');
+      const modalTitle = document.getElementById('auth-modal-title');
+      const modalSub = document.getElementById('auth-modal-sub');
+      const tabSignin = document.getElementById('tab-signin-btn');
+      const tabRegister = document.getElementById('tab-register-btn');
+      const errorEl = document.getElementById('auth-error');
+
+      function showForgot(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (signinForm) signinForm.style.display = 'none';
+        if (registerForm) registerForm.style.display = 'none';
+        if (forgotForm) forgotForm.style.display = 'flex';
+        if (modalTitle) modalTitle.textContent = 'Reset Password';
+        if (modalSub) modalSub.textContent = 'Enter your registered email and choose a new password.';
+        if (tabSignin) tabSignin.classList.remove('active');
+        if (tabRegister) tabRegister.classList.remove('active');
+        if (errorEl) { errorEl.classList.remove('visible'); errorEl.textContent = ''; }
+
+        const currentVal = document.getElementById('signin-email')?.value?.trim();
+        const forgotEmail = document.getElementById('forgot-email');
+        if (currentVal && forgotEmail) {
+          forgotEmail.value = currentVal;
+        }
+      }
+
+      function showSignin(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (signinForm) signinForm.style.display = 'flex';
+        if (registerForm) registerForm.style.display = 'none';
+        if (forgotForm) forgotForm.style.display = 'none';
+        if (modalTitle) modalTitle.textContent = 'Welcome back';
+        if (modalSub) modalSub.textContent = 'Sign in to access your isolated workspace store.';
+        if (tabSignin) tabSignin.classList.add('active');
+        if (tabRegister) tabRegister.classList.remove('active');
+        if (errorEl) { errorEl.classList.remove('visible'); errorEl.textContent = ''; }
+      }
+
+      if (forgotLink) {
+        forgotLink.onclick = showForgot;
+      }
+      if (forgotBack) {
+        forgotBack.onclick = showSignin;
+      }
+
+      // Hook up password eye buttons
+      document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+        // Ensure eye icon is rendered if empty
+        if (!btn.innerHTML.trim()) {
+          btn.innerHTML = EYE_SVG;
+        }
+        btn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const targetId = btn.dataset.passTarget || btn.dataset.target;
+          const input = document.getElementById(targetId);
+          if (!input) return;
+          const isPassword = (input.type === 'password');
+          input.type = isPassword ? 'text' : 'password';
+          btn.innerHTML = isPassword ? EYE_OFF_SVG : EYE_SVG;
+          btn.title = isPassword ? 'Hide password' : 'Show password';
+          btn.setAttribute('aria-label', btn.title);
+        };
+      });
+
+      // Inline fallback handler for forgotForm submit
+      if (forgotForm) {
+        forgotForm.addEventListener('submit', function(e) {
+          const emailInput = document.getElementById('forgot-email');
+          const newPassInput = document.getElementById('forgot-new-password');
+          const confPassInput = document.getElementById('forgot-confirm-password');
+          if (!emailInput || !newPassInput || !confPassInput) return;
+
+          const email = emailInput.value.trim();
+          const newPass = newPassInput.value.trim();
+          const confPass = confPassInput.value.trim();
+
+          if (newPass !== confPass) {
+            e.preventDefault();
+            if (errorEl) {
+              errorEl.textContent = 'Passwords do not match. Please re-enter.';
+              errorEl.classList.add('visible');
+            }
+            return;
+          }
+
+          if (newPass.length < 6) {
+            e.preventDefault();
+            if (errorEl) {
+              errorEl.textContent = 'Password must be at least 6 characters.';
+              errorEl.classList.add('visible');
+            }
+            return;
+          }
+
+          // Use window.__komorebi_auth if available
+          if (window.__komorebi_auth && typeof window.__komorebi_auth.resetPassword === 'function') {
+            return;
+          }
+
+          // Fallback direct storage reset
+          e.preventDefault();
+          try {
+            const raw = localStorage.getItem('komorebi_users_v1');
+            const users = raw ? JSON.parse(raw) : {};
+            const clean = email.toLowerCase();
+            let foundKey = null;
+
+            for (const [k, u] of Object.entries(users)) {
+              if (k.toLowerCase() === clean || (u.email && u.email.toLowerCase() === clean) || (u.name && u.name.toLowerCase() === clean)) {
+                foundKey = k;
+                break;
+              }
+            }
+
+            if (!foundKey) {
+              throw new Error('No account found with this email or username.');
+            }
+
+            users[foundKey].password = newPass;
+            localStorage.setItem('komorebi_users_v1', JSON.stringify(users));
+
+            const u = users[foundKey];
+            const nameParts = u.name ? u.name.trim().split(/\s+/) : [];
+            const initials = nameParts.length >= 2
+              ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+              : (u.name ? u.name.slice(0, 2).toUpperCase() : 'U');
+
+            const session = {
+              user: { id: u.id, name: u.name, email: u.email, initials },
+              isDemo: false,
+              token: `token-${Date.now()}`
+            };
+            localStorage.setItem('komorebi_session_v1', JSON.stringify(session));
+
+            if (modal && typeof modal.close === 'function') modal.close();
+
+            if (typeof window.__komorebi_switchSurface === 'function') {
+              window.__komorebi_switchSurface('app');
+            } else {
+              window.location.reload();
+            }
+          } catch (err) {
+            if (errorEl) {
+              errorEl.textContent = err.message;
+              errorEl.classList.add('visible');
+            }
+          }
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupAuthInline);
+    } else {
+      setupAuthInline();
+    }
+  })();
 </script>
 </body>
 </html>

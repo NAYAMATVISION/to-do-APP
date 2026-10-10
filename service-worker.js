@@ -3,7 +3,7 @@
  * Version: 1.0.0
  */
 
-const CACHE_NAME = 'komorebi-cache-v4';
+const CACHE_NAME = 'komorebi-cache-v8';
 
 // Static assets to pre-cache on installation
 const PRECACHE_ASSETS = [
@@ -70,7 +70,7 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * 3. Fetch Event — Network First for navigation, Cache First for assets with Network Fallback
+ * 3. Fetch Event — Network First with Offline Cache Fallback
  */
 self.addEventListener('fetch', (event) => {
   const req = event.request;
@@ -90,29 +90,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle static assets: Cache First, fallback to Network, then update cache
+  // Handle static assets: Network First to deliver latest updates immediately, fallback to Cache offline
   event.respondWith(
-    caches.match(req).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Return cached asset immediately
-        return cachedResponse;
-      }
-
-      // Not in cache, fetch from network and dynamically cache
-      return fetch(req).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
-        }
-
+    fetch(req).then((networkResponse) => {
+      if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
         const responseToCache = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(req, responseToCache);
         });
-
-        return networkResponse;
-      }).catch((err) => {
-        console.warn('[ServiceWorker] Fetch failed for:', req.url, err);
-      });
+      }
+      return networkResponse;
+    }).catch(() => {
+      return caches.match(req);
     })
   );
 });
